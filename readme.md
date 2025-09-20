@@ -14,43 +14,39 @@ An extensible, open-source framework built on Microwatt and LiteX to create para
 ## 1. Project Summary
 This project builds on the existing integration of Microwatt into LiteX to deliver MicroWatt-LX: a fully-documented, ASIC-ready SoC generator.
 
-- **Primary Innovation:** MicroWatt-LX provides a reproducible pathway from Python-based LiteX configuration to SKY130 GDSII, enabling developers to generate customized SoCs with Microwatt and a wide selection of tested peripherals.
-
-- **Core Deliverable:** A starter kit featuring a working, Linux-capable SoC, automated ASIC flow, and comprehensive documentation. The kit is designed to act as a reusable generator, not just a one-off chip.
-
-- **Stretch Goal:** Extend MicroWatt-LX into an OpenFrame-based platform, offering a standardized, POWER-based template for community shuttle submissions.
-
-**Why LiteX Matters:** LiteX uses Python for SoC construction, which makes hardware design accessible to a much wider audience. Many developers already know Python, and with MicroWatt-LX they can rapidly configure SoCs, swap peripherals, and experiment with new system architectures without needing to write low-level HDL.
-
 ## 2. Core Idea & Value Proposition
 
 ### From CPU Integration → Reusable SoC Generator
 
 Our contribution is to turn Microwatt using Litex and Openframe into a parameterizable, ASIC-ready SoC generator with tested peripherals and clear documentation.
 
-#### What this project delivers:
+### Key Value Propositions:
 
-- **Generator Approach:** Users configure and build SoCs through Python, producing ASIC-compatible RTL directly from LiteX.
+Even with Microwatt open-sourced, building a POWER ASIC is nearly impossible for most developers:
 
-- P**eripheral Library:** Out-of-the-box support for common peripherals (UART, SPI, GPIO, timers) tested within the ASIC flow.
+- Raw Microwatt requires months of manual integration, custom memory wiring, and ASIC flow debugging
+- Proprietary cores are closed, costly, and inaccessible to researchers or startups
+- RISC-V dominates because tooling and generators exist, while POWER lacks the same open ASIC ecosystem
 
-- **Professional SRAM Integration:** ChipFoundry macros (1–16MB) with controllers ready for SKY130.
+**The missing piece isn’t the CPU core, it’s a SoC generator and verified ecosystem.**
 
-- **ASIC Flow Ready:** Complete open-source methodology from LiteX scripts → RTL → OpenLane → GDSII.
+### Python-to-Silicon POWER Pipeline (via LiteX)
 
-- **Optional OpenFrame Support:** A standardized POWER-based template for shuttle submissions.
+We are the first to deliver a Python → POWER ASIC flow. LiteX already enables Python-based SoC generation, and we extend it with ASIC-verified configuration. 
+#### **Why LiteX Matters:** 
+LiteX uses Python for SoC construction, which makes hardware design accessible to a much wider audience. Many developers already know Python, and with MicroWatt-LX they can rapidly configure SoCs, swap peripherals, and experiment with new system architectures without needing to write low-level HDL.
 
-#### Key Value Propositions:
+### ASIC-Verified Peripheral Library (via LiteX + ChipFoundry SRAM)
 
-- **Flexibility:** Simple Python scripting to generate a wide range of SoC configurations.
+We provide the first ASIC-verified peripheral library for POWER SoCs, built on proven LiteX IP blocks and ChipFoundry’s professional SRAM macros.
 
-- **Extensibility:** Users can add peripherals or modify the system without redoing low-level integration.
+### OpenFrame-Ready POWER Platform (Stretch Goal)
 
-- **Accessibility:** Python makes hardware design approachable for students, researchers, and startups.
+As a stretch goal, we package MicroWatt-LX as the first OpenFrame-ready POWER template, enabling:
 
-- **Reproducibility:** 100% open-source, ASIC-verified flow.
-
-- **Community Value:** A shared generator framework that lowers the barrier for future Microwatt-based SoC projects.
+- Reusable POWER shuttle submissions
+- Standardized platform for research and education
+- Shared community infrastructure for future POWER designs
 
 ## 3. Proposed Architecture
 
