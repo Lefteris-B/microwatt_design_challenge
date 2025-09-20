@@ -3,7 +3,8 @@
 
 
 ### **Project Proposal:**
- The MicroWatt-LX SoC Generator
+#### **The MicroWatt-LX SoC Generator**
+
 An extensible, open-source framework built on Microwatt and LiteX to create parameterizable SoCs on SKY130, with a library of already-tested peripherals and a documented ASIC flow.
 
 ![alt text](https://img.shields.io/badge/License-APACHE2.0-yellow.svg) 
@@ -134,7 +135,99 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 | Documentation | 15% (Week 3) | High | Complete tutorials |
 | Platform Extension | 10% (Week 4) | Optional | Community framework |
 
-## 5. Project Vision & Impact
+## 6. Technical Difficulties & Risk Mitigation
+
+While MicroWatt-LX builds on proven technologies, turning them into a cohesive, parameterizable SoC generator suitable for ASIC requires navigating several technical challenges. Careful planning and fallback options are essential to ensure success.
+
+## Generator & Framework Challenges
+### 1. **Parameterization Complexity**
+
+LiteX already supports modular SoC generation, but packaging Microwatt with a broad set of tested peripherals into a reliable, user-facing generator introduces complexity. Python makes configuration easier, but coordinating multiple design options while keeping the ASIC flow stable can lead to corner-case failures.
+
+#### **Mitigation Strategy**:
+
+- Start with a minimal but tested configuration (Microwatt + UART + SRAM) as the baseline
+- Incrementally add peripherals and verify each configuration in simulation before ASIC flow
+- Provide reference “profiles” (minimal, Linux-capable, extended) to reduce user misconfigurations
+### 2. VHDL–Verilog Coordination
+
+Microwatt’s VHDL implementation must coexist smoothly within LiteX’s largely Verilog-based ecosystem, which can cause build flow complications for ASIC synthesis.
+
+#### Mitigation Strategy:
+
+- Use the maintained pythondata-cpu-microwatt repositories for VHDL wrapping.
+- Maintain strict separation between VHDL and Verilog components in the build flow.
+- Run comprehensive simulation before handing designs to OpenLane.
+
+### 3.  ASIC Implementation Challenges
+- **Timing Closure on SKY130**
+
+Achieving timing closure on SKY130 is non-trivial, particularly for larger SoC configurations. Setup/hold issues, fanout, and clock distribution can all require iterative optimization.
+
+**Mitigation Strategy:**
+
+- Conservative first-pass target of 50 MHz to allow margin
+- Incremental timing analysis and optimization (cell sizing, buffering, fanout management)
+- Hierarchical timing closure for complex blocks
+
+### 4. Memory Macro Integration
+
+Integrating SRAM macros into SKY130 adds DRC and LVS complexity, especially with optical proximity and memory-specific design rules.
+
+**Mitigation Strategy:**
+
+- Begin with 1 MB SRAM macros known to be compatible
+- Use ChipFoundry-provided SRAM for reliability
+- Run thorough DRC/LVS checks with Magic and KLayout
+- Maintain fallback to smaller internal SRAM + external memory stubs
+
+### 5. Physical Design & Verification
+
+DRC/LVS compliance in OpenLane can be challenging due to antenna effects, PDN design, and corner-case rule interactions.
+
+**Mitigation Strategy**:
+
+- Reuse proven OpenLane configurations from past SKY130 tapeouts
+- Stage verification (DRC, LVS, antenna) at each checkpoint
+- Allocate dedicated time for iterative fixes in physical verification
+
+## System-Level Challenges
+### Power & Performance Balance
+
+Keeping power <100 mW while maintaining Linux-capable performance requires careful synthesis, clock gating, and optimization.
+
+#### Mitigation Strategy:
+
+- Conservative power budgeting with margin
+- Power-aware synthesis and PnR
+- Clock gating where beneficial
+- Early power estimation to guide optimization
+
+### Peripheral Integration & Verification
+
+Multiple peripherals (UART, SPI, GPIO, timers) must interoperate reliably on the LiteX Wishbone bus. Bus arbitration and driver correctness require extensive testing.
+
+#### Mitigation Strategy:
+
+- Use standard LiteX peripheral IP with known software drivers
+- Incremental integration (core + memory first, then add peripherals)
+- Hardware/software co-verification using test programs
+
+### Schedule & Resource Risks
+
+## Success Probability Assessment
+
+Despite these risks, MicroWatt-LX has a high likelihood of success because:
+
+- **Proven Building Blocks:** Microwatt, LiteX, and SKY130 have successful prior tapeouts
+- **Conservative Targets:** 50 MHz operation ensures generous timing slack
+- **Incremental Validation:** Each SoC profile is tested before advancing to ASIC flow
+- **Community Backing:** Active open-source ecosystems for all major components
+- **Fallback Options:** Smaller configurations and external memory interfaces ensure progress
+
+By planning for conservative success and leaving room for stretch goals, this project minimizes risk while maximizing its impact as an ASIC-ready SoC generator.
+
+## 6. Project Vision & Impact
 
 ### For the Hackathon:
 - Meets Requirements: Microwatt CPU, SKY130 flow, OpenFrame targeting.
