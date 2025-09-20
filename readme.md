@@ -7,10 +7,10 @@
 
 An extensible, open-source framework built on Microwatt and LiteX to create parameterizable SoCs on SKY130, with a library of already-tested peripherals and a documented ASIC flow.
 
-![alt text](https://img.shields.io/badge/License-APACHE2.0-yellow.svg) 
-![alt text](https://img.shields.io/badge/CPU-Microwatt%20POWER-blue)
-![alt text](https://img.shields.io/badge/Framework-LiteX-orange)
-![alt text](https://img.shields.io/badge/PDK-SKY130-green)
+[![alt text](https://img.shields.io/badge/License-APACHE2.0-yellow.svg)](https://github.com/Lefteris-B/microwatt_design_challenge/blob/main/license.md) 
+[![alt text](https://img.shields.io/badge/CPU-Microwatt%20POWER-blue)](https://git.openpower.foundation/cores/microwatt)
+[![alt text](https://img.shields.io/badge/Framework-LiteX-orange)](https://github.com/enjoy-digital/litex)
+[![alt text](https://img.shields.io/badge/PDK-SKY130-green)](https://skywater-pdk.readthedocs.io/en/main/index.html)
 [![CI - Smoke](https://img.shields.io/badge/CI-SMOKE-green)](https://github.com/Lefteris-B/microwatt_design_challenge/actions/workflows/ci-smoke.yml)
 
 ## 1. Project Summary
