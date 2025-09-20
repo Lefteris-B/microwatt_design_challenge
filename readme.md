@@ -38,21 +38,21 @@ As a stretch goal, we package MicroWatt-LX as the first OpenFrame-ready POWER te
 
 The MicroWatt-LX SoC will be constructed around a central Wishbone bus, managed by LiteX.
 ```code
-┌─────────────────────────────────────────────────────────────────┐
-│                    MicroWatt-LX ASIC Starter Kit                │
-│                                                                 │
-│  ┌─────────────┐      ┌────────────────────────────────────────┐ │
-│  │  Microwatt  │      │         LiteX SoC Framework           │ │
-│  │ (POWER CPU) │◄────►│        (ASIC-Optimized Bus)           │ │
-│  └─────────────┘      └─────────────┬──────────────────────────┘ │
-│                                     │                            │
+┌───────────────────────────────────────────────────────────────────┐
+│                    MicroWatt-LX ASIC Starter Kit                  │
+│                                                                   │ 
+│  ┌─────────────┐      ┌────────────────────────────────────────┐  │
+│  │  Microwatt  │      │         LiteX SoC Framework            │  │
+│  │ (POWER CPU) │◄────►│        (ASIC-Optimized Bus)            │  │
+│  └─────────────┘      └─────────────┬──────────────────────────┘  │
+│                                     │                             │
 │  ┌─────────────┬─────────────┬──────┴─────┬─────────────────────┐ │
 │  │ChipFoundry  │   Memory    │  Standard  │     Extension       │ │
-│  │SRAM Macros  │ Controller  │Peripherals │   Socket (Future    │ │
-│  │ (1-16MB)    │             │(UART/SPI/  │   Accelerators)     │ │
-│  │             │             │ GPIO)      │                     │ │
+│  │SRAM Macros  │ Controller  │Peripherals │   Interface (e.g.,  │ │
+│  │ (128KB-1MB) │             │(UART/SPI/  │   Accelerators)     │ │
+│  │             │             │ GPIO/Timer)|                     │ │
 │  └─────────────┴─────────────┴────────────┴─────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+└───────────────────────────────────────────────────────────────────┘
 ```
 ### **System Component Specifications**
 
@@ -107,11 +107,11 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 |  |  | 25-26 | OpenFrame integration | Shuttle optimization<br>Community tools<br>Testing | Community platform |
 |  |  | 27-28 | Release prep | Final validation<br>Video creation<br>Community release | Public release |
 
-## 6. Technical Difficulties & Risk Mitigation
+## 5. Technical Difficulties & Risk Mitigation
 
 While MicroWatt-LX builds on proven technologies, turning them into a cohesive, parameterizable SoC generator suitable for ASIC requires navigating several technical challenges. Careful planning and fallback options are essential to ensure success.
 
-### Success Metrics
+### 5.1 Success Metrics
 
 **Minimum Success:** The chip powers on, boots a simple firmware via UART, and can toggle GPIOs. We achieve a conservative 50MHz frequency.
 
@@ -119,8 +119,8 @@ While MicroWatt-LX builds on proven technologies, turning them into a cohesive, 
 
 **Stretch Success:** The SoC generator is robust, supports multiple configurations, and is packaged for easy use on future ChipFoundry shuttles.
 
-## Generator & Framework Challenges
-### 1. **Parameterization Complexity**
+## 5.2 Generator & Framework Challenges
+### 5.2.1. **Parameterization Complexity**
 
 LiteX already supports modular SoC generation, but packaging Microwatt with a broad set of tested peripherals into a reliable, user-facing generator introduces complexity. Python makes configuration easier, but coordinating multiple design options while keeping the ASIC flow stable can lead to corner-case failures.
 
@@ -129,7 +129,7 @@ LiteX already supports modular SoC generation, but packaging Microwatt with a br
 - Start with a minimal but tested configuration (Microwatt + UART + SRAM) as the baseline
 - Incrementally add peripherals and verify each configuration in simulation before ASIC flow
 - Provide reference “profiles” (minimal, Linux-capable, extended) to reduce user misconfigurations
-### 2. VHDL–Verilog Coordination
+### 5.2.2. VHDL–Verilog Coordination
 
 Microwatt’s VHDL implementation must coexist smoothly within LiteX’s largely Verilog-based ecosystem, which can cause build flow complications for ASIC synthesis.
 
@@ -139,7 +139,7 @@ Microwatt’s VHDL implementation must coexist smoothly within LiteX’s largely
 - Maintain strict separation between VHDL and Verilog components in the build flow.
 - Run comprehensive simulation before handing designs to OpenLane.
 
-### 3.  ASIC Implementation Challenges
+### 5.2.3.  ASIC Implementation Challenges
 - **Timing Closure on SKY130**
 
 Achieving timing closure on SKY130 is non-trivial, particularly for larger SoC configurations. Setup/hold issues, fanout, and clock distribution can all require iterative optimization.
@@ -150,7 +150,7 @@ Achieving timing closure on SKY130 is non-trivial, particularly for larger SoC c
 - Incremental timing analysis and optimization (cell sizing, buffering, fanout management)
 - Hierarchical timing closure for complex blocks
 
-### 4. Memory Macro Integration
+### 5.2.4. Memory Macro Integration
 
 Integrating SRAM macros into SKY130 adds DRC and LVS complexity, especially with optical proximity and memory-specific design rules.
 
@@ -161,7 +161,7 @@ Integrating SRAM macros into SKY130 adds DRC and LVS complexity, especially with
 - Run thorough DRC/LVS checks with Magic and KLayout
 - Maintain fallback to smaller internal SRAM + external memory stubs
 
-### 5. Physical Design & Verification
+### 5.2.5. Physical Design & Verification
 
 DRC/LVS compliance in OpenLane can be challenging due to antenna effects, PDN design, and corner-case rule interactions.
 
@@ -171,8 +171,8 @@ DRC/LVS compliance in OpenLane can be challenging due to antenna effects, PDN de
 - Stage verification (DRC, LVS, antenna) at each checkpoint
 - Allocate dedicated time for iterative fixes in physical verification
 
-## System-Level Challenges
-### Power & Performance Balance
+## 5.3 System-Level Challenges
+### 5.3.1 Power & Performance Balance
 
 Keeping power <100 mW while maintaining Linux-capable performance requires careful synthesis, clock gating, and optimization.
 
@@ -183,7 +183,7 @@ Keeping power <100 mW while maintaining Linux-capable performance requires caref
 - Clock gating where beneficial
 - Early power estimation to guide optimization
 
-### Peripheral Integration & Verification
+### 5.3.2 Peripheral Integration & Verification
 
 Multiple peripherals (UART, SPI, GPIO, timers) must interoperate reliably on the LiteX Wishbone bus. Bus arbitration and driver correctness require extensive testing.
 
@@ -193,9 +193,7 @@ Multiple peripherals (UART, SPI, GPIO, timers) must interoperate reliably on the
 - Incremental integration (core + memory first, then add peripherals)
 - Hardware/software co-verification using test programs
 
-### Schedule & Resource Risks
-
-## Success Probability Assessment
+### 5.4 Success Probability Assessment
 
 Despite these risks, MicroWatt-LX has a high likelihood of success because:
 
