@@ -1,4 +1,4 @@
-# MicroWatt-LX ASIC Starter Kit
+# The MicroWatt-LX SoC Generator: An Open-Source, Python-Driven POWER ASIC Platform
 ## Complete Open-Source [Microwatt](https://git.openpower.foundation/cores/microwatt) + [LiteX](https://github.com/enjoy-digital/litex) Parameterized SoC Implementation for ChipFoundry OpenFrame
 
 
@@ -34,7 +34,7 @@ Even with Microwatt open-sourced, building a POWER ASIC is nearly impossible for
 
 We are the first to deliver a Python → POWER ASIC flow. LiteX already enables Python-based SoC generation, and we extend it with ASIC-verified configuration. 
 #### **Why LiteX Matters:** 
-LiteX uses Python for SoC construction, which makes hardware design accessible to a much wider audience. Many developers already know Python, and with MicroWatt-LX they can rapidly configure SoCs, swap peripherals, and experiment with new system architectures without needing to write low-level HDL.
+LiteX's Python-based abstraction allows developers to configure a Linux-capable POWER SoC in minutes, not months. This democratizes access to ASIC design, allowing innovators to focus on their unique value (e.g., custom accelerators) instead of the complexities of memory controllers and bus arbitration.
 
 ### ASIC-Verified Peripheral Library (via LiteX + ChipFoundry SRAM)
 
@@ -97,6 +97,14 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 
 ## 4. Implementation Timeline
 
+### **Critical Milestones & Decision Points**
+
+| Milestone | Week | Criteria | Go/No-Go Decision |
+|-----------|------|----------|-------------------|
+| Foundation Complete | 1 | SoC simulation working | Continue to implementation |
+| System Integration | 2 | Linux boots successfully | Proceed with ASIC flow |
+| ASIC Validation | 3 | Clean DRC/LVS results | Evaluate stretch goals |
+| Platform Decision | 3 | Schedule assessment | OpenFrame platform or polish |
 ### **Detailed Weekly Breakdown**
 
 | Week | Phase | Days | Objectives | Key Activities | Deliverables |
@@ -113,27 +121,17 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 |  |  | 25-26 | OpenFrame integration | Shuttle optimization<br>Community tools<br>Testing | Community platform |
 |  |  | 27-28 | Release prep | Final validation<br>Video creation<br>Community release | Public release |
 
-### **Critical Milestones & Decision Points**
-
-| Milestone | Week | Criteria | Go/No-Go Decision |
-|-----------|------|----------|-------------------|
-| Foundation Complete | 1 | SoC simulation working | Continue to implementation |
-| System Integration | 2 | Linux boots successfully | Proceed with ASIC flow |
-| ASIC Validation | 3 | Clean DRC/LVS results | Evaluate stretch goals |
-| Platform Decision | 3 | Schedule assessment | OpenFrame platform or polish |
-
-### **Resource Allocation & Focus Areas**
-
-| Focus Area | Time Allocation | Priority Level | Success Metrics |
-|------------|----------------|----------------|-----------------|
-| Core Integration | 40% (Weeks 1-2) | Critical | Working SoC simulation |
-| ASIC Implementation | 35% (Weeks 2-3) | Critical | Clean GDSII output |
-| Documentation | 15% (Week 3) | High | Complete tutorials |
-| Platform Extension | 10% (Week 4) | Optional | Community framework |
-
 ## 6. Technical Difficulties & Risk Mitigation
 
 While MicroWatt-LX builds on proven technologies, turning them into a cohesive, parameterizable SoC generator suitable for ASIC requires navigating several technical challenges. Careful planning and fallback options are essential to ensure success.
+
+### Success Metrics
+
+**Minimum Success:** The chip powers on, boots a simple firmware via UART, and can toggle GPIOs. We achieve a conservative 50MHz frequency.
+
+**Target Success:** The chip boots Linux from SRAM to a userspace prompt. We achieve >50MHz operation.
+
+**Stretch Success:** The SoC generator is robust, supports multiple configurations, and is packaged for easy use on future ChipFoundry shuttles.
 
 ## Generator & Framework Challenges
 ### 1. **Parameterization Complexity**
