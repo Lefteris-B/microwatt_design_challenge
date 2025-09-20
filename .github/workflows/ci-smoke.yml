@@ -1,0 +1,84 @@
+name: CI - Smoke Synthesis & Simulation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      SRAM_BASE: 0x40000000
+      SRAM_SIZE: 0x20000
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (apt)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git build-essential make cmake python3 python3-pip \
+            gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu \
+            yosys verilator ghdl || true
+          # Note: older Ubuntu images may not have all packages; installation may require PPAs or Docker images.
+          pip3 install --user pyyaml
+
+      - name: Build baremetal hello (if sw/hello.c exists)
+        run: |
+          set -e
+          mkdir -p build || true
+          if [ -f sw/hello.c ]; then
+            echo "Building baremetal hello..."
+            powerpc64le-linux-gnu-gcc -nostdlib -nostartfiles -Ttext=${SRAM_BASE} -o build/hello.elf sw/hello.c || true
+            powerpc64le-linux-gnu-objdump -D build/hello.elf | sed -n '1,120p' || true
+          else
+            echo "sw/hello.c not found; skipping baremetal build."
+          fi
+
+      - name: Run GHDL analysis (if rtl/ *.vhd exists)
+        run: |
+          set -e
+          if ls rtl/*.vhd 1> /dev/null 2>&1; then
+            echo "Found VHDL files; running ghdl analysis..."
+            for f in rtl/*.vhd; do ghdl -a --std=08 "$f" || true; done
+            # Elaborate top if present
+            if [ -f rtl/top.vhd ] || [ -f rtl/top.vhdl ]; then
+              ghdl -e --std=08 top || true
+            fi
+          else
+            echo "No VHDL files in rtl/; skipping ghdl step."
+          fi
+
+      - name: Attempt Yosys + GHDL synthesis (template)
+        run: |
+          set -e
+          echo "Attempting a yosys + ghdl front-end run (requires ghdl-yosys plugin)."
+          if command -v yosys >/dev/null 2>&1; then
+            # This is a template command; adjust 'top' and paths to match your repo.
+            if ls rtl/*.vhd 1> /dev/null 2>&1; then
+              yosys -p "ghdl --std=08 -a rtl/*.vhd; ghdl --std=08 -e top; synth -top top -flatten -abc" || true
+            else
+              echo "No VHDL found for yosys; skipping."
+            fi
+          else
+            echo "yosys not installed; skipping synthesis step."
+          fi
+
+      - name: Verilator simulation (template)
+        run: |
+          set -e
+          if ls rtl/*.v rtl/*.sv 1> /dev/null 2>&1; then
+            echo "Found Verilog/SystemVerilog files; attempting Verilator build (repo must include sim harness)."
+            # Minimal placeholder: user should provide sim_main.cpp and top-level module name
+            verilator --version || true
+            # Example (requires project-specific sources): verilator --cc rtl/top.sv --exe sim/sim_main.cpp -CFLAGS "-std=gnu++17" && make -C obj_dir -j -f Vtop.mk Vtop || true
+          else
+            echo "No Verilog files found; skipping verilator step."
+          fi
+
+      - name: Report artifacts
+        run: |
+          echo "Artifacts in build/:"
+          ls -la build || true

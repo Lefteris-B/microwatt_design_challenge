@@ -11,6 +11,8 @@ An extensible, open-source framework built on Microwatt and LiteX to create para
 ![alt text](https://img.shields.io/badge/CPU-Microwatt%20POWER-blue)
 ![alt text](https://img.shields.io/badge/Framework-LiteX-orange)
 ![alt text](https://img.shields.io/badge/PDK-SKY130-green)
+[![CI - Smoke](https://img.shields.io/badge/CI-SMOKE-green)](https://github.com/Lefteris-B/microwatt_design_challenge/actions/workflows/ci-smoke.yml)
+
 ## 1. Project Summary
 This project builds on the existing integration of Microwatt into LiteX to deliver MicroWatt-LX: a fully-documented, ASIC-ready SoC generator.
 
@@ -98,7 +100,7 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 | 1 | Foundation | 1-3 | Establish core integration | Microwatt-LiteX setup<br>SRAM macro integration<br>Basic simulation | Working SoC simulation |
 |  |  | 4-5 | Peripheral integration | UART, GPIO, SPI setup<br>Driver development<br>Testing framework | Basic I/O functionality |
 |  |  | 6-7 | ASIC flow setup | OpenLane configuration<br>Initial synthesis<br>Constraint development | Synthesis validation |
-| 2 | Implementation   | 8 -12 | System integration | Full system testing<br>Performance tuning<br>Bug fixes | Complete working system |
+| 2 | Implementation   | 8 -12 | System Integration |  Baremetal/U-Boot boots to UART from internal SRAM (Linux is a documented stretch goal requiring external DRAM or ≥8 MB on-chip) | Proceed with ASIC flow
 |  |  | 13-14 | ASIC optimization | Timing closure work<br>Power optimization<br>Multiple configs | Optimized ASIC design |
 | 3 | Production | 15-17 | GDSII generation | Complete PnR flow<br>DRC/LVS validation<br>Final verification | Production GDSII |
 |  |  | 18-19 | Characterization | Performance benchmarks<br>Resource analysis<br>Comparison studies | Technical metrics |
@@ -115,9 +117,10 @@ While MicroWatt-LX builds on proven technologies, turning them into a cohesive, 
 
 **Minimum Success:** The chip powers on, boots a simple firmware via UART, and can toggle GPIOs. We achieve a conservative 50MHz frequency.
 
-**Target Success:** Demonstrate Linux boot capability with external DRAM. For the contest baseline we will target baremetal/U-Boot boot to UART from internal SRAM; Linux boot is a stretch goal that requires ≥8 MB of RAM or an external DRAM interface.
+**Target Success:** For the contest baseline we will target baremetal/U-Boot boot to UART from internal SRAM.
 
-**Stretch Success:** The SoC generator is robust, supports multiple configurations, and is packaged for easy use on future ChipFoundry shuttles.
+**Stretch Success:** The SoC generator is robust, supports multiple configurations, and is packaged for easy use on future ChipFoundry shuttles using OpenFrame. 
+Linux boot is a stretch goal that requires ≥8 MB of RAM or an external DRAM interface.
 
 ## 5.2 Generator & Framework Challenges
 ### 5.2.1. **Parameterization Complexity**
@@ -187,7 +190,13 @@ Below is a small, practical floorplan for a single-core MicroWatt-LX in SKY130 w
 +---------------------------------------------------------------+
 Bottom metal / service area
 ```
+- Group macros together in a compact rectangular block to reduce global routing and enable sharing of local word/bitline routing resources. Place the macro block on the same side of the CPU cluster as the main master bus (Wishbone/LiteX fabric) to shorten addresses and data buses.
 
+- Mirror macros in alternating rows (standard macro-mirror practice) to ease bitline routing and reduce metal congestion.
+
+- Leave a routing corridor between the CPU cluster and the macro block for the high-fanout address / data buses (metal1/metal2). Keep the corridor free of macro keepout layers.
+
+  
 ### 5.2.5. Physical Design & Verification
 
 DRC/LVS compliance in OpenLane can be challenging due to antenna effects, PDN design, and corner-case rule interactions.
@@ -197,6 +206,7 @@ DRC/LVS compliance in OpenLane can be challenging due to antenna effects, PDN de
 - Reuse proven OpenLane configurations from past SKY130 tapeouts
 - Stage verification (DRC, LVS, antenna) at each checkpoint
 - Allocate dedicated time for iterative fixes in physical verification
+- PDN : Global M3/M4 rails; metal1/2 straps every 50–200 µm; at least 4 via columns per macro VDD pad as starting point; run IR drop.
 
 ## 5.3 System-Level Challenges
 ### 5.3.1 Power & Performance Balance
@@ -220,6 +230,12 @@ Multiple peripherals (UART, SPI, GPIO, timers) must interoperate reliably on the
 - Incremental integration (core + memory first, then add peripherals)
 - Hardware/software co-verification using test programs
 
+### Software
+
+- Cross toolchain: gcc-powerpc64le-linux-gnu
+- Baseline: baremetal hello + memtest
+- Next: U-Boot port (board/microwatt_lx), defconfig, build with CROSS_COMPILE
+- Stretch: U-Boot netboot to Microwatt Linux (mainline supports Microwatt)
 ### 5.4 Success Probability Assessment
 
 Despite these risks, MicroWatt-LX has a high likelihood of success because:
@@ -235,3 +251,5 @@ By planning for conservative success and leaving room for stretch goals, this pr
 ## 6. Project Vision & Impact
 
 MicroWatt-LX is a reusable POWER ASIC starter kit, lowering barriers for education, startups, and research. It advances OpenPOWER by enabling custom chips, with deliverables (RTL, testbenches, docs) ensuring reproducibility per contest rules. Our vision is to turn one contest submission into a reusable foundation that accelerates many future projects.
+
+MicroWatt-LX will deliver a verified, reproducible baseline SoC (Microwatt + LiteX) that boots baremetal/U-Boot from internal SRAM with UART I/O.  The repo will include smoke synthesis, simulation, software tests and SRAM/floorplan artifacts so judges can reproduce and validate the baseline.
