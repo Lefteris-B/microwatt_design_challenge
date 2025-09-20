@@ -115,7 +115,7 @@ While MicroWatt-LX builds on proven technologies, turning them into a cohesive, 
 
 **Minimum Success:** The chip powers on, boots a simple firmware via UART, and can toggle GPIOs. We achieve a conservative 50MHz frequency.
 
-**Target Success:** The chip boots Linux from SRAM to a userspace prompt. We achieve >50MHz operation.
+**Target Success:** Demonstrate Linux boot capability with external DRAM. For the contest baseline we will target baremetal/U-Boot boot to UART from internal SRAM; Linux boot is a stretch goal that requires ≥8 MB of RAM or an external DRAM interface.
 
 **Stretch Success:** The SoC generator is robust, supports multiple configurations, and is packaged for easy use on future ChipFoundry shuttles.
 
@@ -134,7 +134,7 @@ LiteX already supports modular SoC generation, but packaging Microwatt with a br
 Microwatt’s VHDL implementation must coexist smoothly within LiteX’s largely Verilog-based ecosystem, which can cause build flow complications for ASIC synthesis.
 
 #### Mitigation Strategy:
-
+- Use GHDL-Yosys front-end for VHDL synthesis.
 - Use the maintained pythondata-cpu-microwatt repositories for VHDL wrapping.
 - Maintain strict separation between VHDL and Verilog components in the build flow.
 - Run comprehensive simulation before handing designs to OpenLane.
@@ -155,11 +155,38 @@ Achieving timing closure on SKY130 is non-trivial, particularly for larger SoC c
 Integrating SRAM macros into SKY130 adds DRC and LVS complexity, especially with optical proximity and memory-specific design rules.
 
 **Mitigation Strategy:**
-
-- Begin with 128k SRAM macros known to be compatible
+- Use ChipFoundry-provided (proprietary) SRAM macros.
+- Macros will be floorplanned adjacent to Microwatt, with explicit power tap and keepout regions. 
+- We will attach early LVS/DRC runs to the CI for iteration tracking.
+- Begin with 1 x 32 KB macros known to be compatible for ultra-minimal demos (e.g., blink + UART). 
 - Use ChipFoundry-provided SRAM for reliability
 - Run thorough DRC/LVS checks with Magic and KLayout
 - Maintain fallback to smaller internal SRAM + external memory stubs
+
+Below is a small, practical floorplan for a single-core MicroWatt-LX in SKY130 with on-chip SRAM macros and an IO/pad ring. The sketch is intentionally compact.
+
+```Top metal / service area
++---------------------------------------------------------------+
+| IO Pad Ring (pads for VDDIO, GND, SPI, UART pins, CLK pads)   |
+|  [IO TOP PADS]                                                |
++---------------------------------------------------------------+
+|                           Padframe                            |
+|  +---------------------------------------------------------+  |
+|  |  IO Left  |  Core & Std Cells  |  SRAM Macro Region     |  |
+|  |  Pads     |  (Microwatt + AXI/  |  (grouped macros,     |  |
+|  |           |   LiteX interconnect)|  mirrored rows)      |  |
+|  |           |                     |                       |  |
+|  |           |                     |  [SRAM block A]       |  |
+|  |           |     CPU Cluster     |  [SRAM block B]       |  |
+|  |           |  (Microwatt + L2)   |  [SRAM block C]       |  |
+|  |  Power    |  +--Cache/Periph--+  |  [SRAM block D]      |  |
+|  |  straps   |  | UART, SPI, ETH |  |                      |  |
+|  |  & PDN    |  +-----------------+  +---------------------+  |
+|  +---------------------------------------------------------+  |
+|  [IO BTM PADS]                                                |
++---------------------------------------------------------------+
+Bottom metal / service area
+```
 
 ### 5.2.5. Physical Design & Verification
 
