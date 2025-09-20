@@ -248,7 +248,16 @@ Despite these risks, MicroWatt-LX has a high likelihood of success because:
 
 By planning for conservative success and leaving room for stretch goals, this project minimizes risk while maximizing its impact as an ASIC-ready SoC generator.
 
-## 6. Project Vision & Impact
+## 6. Continuus Integration (CI) & Verification flow
+
+ The repository includes a reproducible smoke CI (.github/workflows/ci-smoke.yml) that demonstrates the end-to-end minimal flow:
+ - Builds a cross-compiled baremetal hello.elf (if sw/hello.c is present),
+ - runs GHDL analysis and a GHDL→Yosys smoke synthesis pass on rtl/*.vhd,
+ - attempts a Verilator simulation step (placeholder for a project-specific testbench). 
+ 
+ CI uploads build artifacts (build/hello.elf) and exposes logs so reviewers can confirm synthesis, simulation and software build results directly from the GitHub Actions run.
+
+## 7. Project Vision & Impact
 
 MicroWatt-LX is a reusable POWER ASIC starter kit, lowering barriers for education, startups, and research. It advances OpenPOWER by enabling custom chips, with deliverables (RTL, testbenches, docs) ensuring reproducibility per contest rules. Our vision is to turn one contest submission into a reusable foundation that accelerates many future projects.
 
