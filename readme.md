@@ -14,7 +14,7 @@ An extensible, open-source framework built on Microwatt and LiteX to create para
 [![CI - Smoke](https://img.shields.io/badge/CI-SMOKE-green)](https://github.com/Lefteris-B/microwatt_design_challenge/actions/workflows/ci-smoke.yml)
 
 ## 1. Project Summary
-This project builds on the existing integration of Microwatt into LiteX to deliver MicroWatt-LX: a fully-documented, ASIC-ready SoC generator.
+This project delivers MicroWatt-LX: a fully-documented, parameterizable SoC generator that transforms a Python configuration into a tapeout-ready POWER ASIC on SKY130, built on Microwatt and LiteX.
 
 ## 2. Core Idea & Value Proposition
 
@@ -51,7 +51,7 @@ The MicroWatt-LX SoC will be constructed around a central Wishbone bus, managed 
 │  ┌─────────────┬─────────────┬──────┴─────┬─────────────────────┐ │
 │  │ChipFoundry  │   Memory    │  Standard  │     Extension       │ │
 │  │SRAM Macros  │ Controller  │Peripherals │   Interface (e.g.,  │ │
-│  │ (128KB-1MB) │             │(UART/SPI/  │   Accelerators)     │ │
+│  │ (32-256 KB) │             │(UART/SPI/  │   Accelerators)     │ │
 │  │             │             │ GPIO/Timer)|                     │ │
 │  └─────────────┴─────────────┴────────────┴─────────────────────┘ │
 └───────────────────────────────────────────────────────────────────┘
@@ -80,8 +80,8 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 - **Power Budget:** <100mW estimated @ 50MHz
 
 #### Fallback Memory Plan:
- If large SRAM sizes exceed area budgets, the design will default to 1MB internal + external memory interface stubs, ensuring progress.
- We can also use a SPI extenal RAM. 
+ If large SRAM sizes exceed area budgets, the design will default to 32KB internal + external memory interface stubs, ensuring progress.
+ We can also use a SPI external RAM. 
 
 ## 4. Implementation Timeline
 
@@ -248,7 +248,7 @@ Despite these risks, MicroWatt-LX has a high likelihood of success because:
 
 By planning for conservative success and leaving room for stretch goals, this project minimizes risk while maximizing its impact as an ASIC-ready SoC generator.
 
-## 6. Continuus Integration (CI) & Verification flow
+## 6. Continuous Integration (CI) & Verification flow
 
  The repository includes a reproducible smoke CI (.github/workflows/ci-smoke.yml) that demonstrates the end-to-end minimal flow:
  - Builds a cross-compiled baremetal hello.elf (if sw/hello.c is present),
