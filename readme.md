@@ -22,10 +22,10 @@ Microwatt provides an open POWER CPU, but building a full ASIC SoC remains chall
 
 ### Key Values:
 
-- **Python-to-Silicon Pipeline:** LiteX enables rapid SoC configuration (e.g., Linux-capable in minutes), letting users focus on innovations like custom accelerators rather than bus or memory details.
+- **Python-to-Silicon Pipeline:** LiteX enables rapid SoC configuration, letting users focus on innovations like custom accelerators rather than bus or memory details.
 - **ASIC-Verified Peripherals**: First library of production-ready IP for POWER SoCs, using LiteX blocks and ChipFoundry SRAM macros.
 - **Community Enablement:** OpenFrame-ready template for shuttles, education, and research, fostering OpenPOWER ASIC collaboration.
-- **Hackathon Fit:** Demonstrates Microwatt's potential in open computing, with extensions for useful integrations (e.g., sensor interfaces per contest examples).
+- **Hackathon Fit:** Demonstrates Microwatt's potential in open computing, with extensions for useful integrations (e.g., sensor interfaces).
 ### OpenFrame-Ready POWER Platform (Stretch Goal)
 
 As a stretch goal, we package MicroWatt-LX as the first OpenFrame-ready POWER template, enabling:
