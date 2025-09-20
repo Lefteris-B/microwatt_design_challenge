@@ -18,28 +18,14 @@ This project builds on the existing integration of Microwatt into LiteX to deliv
 
 ### From CPU Integration → Reusable SoC Generator
 
-Our contribution is to turn Microwatt using Litex and Openframe into a parameterizable, ASIC-ready SoC generator with tested peripherals and clear documentation.
+Microwatt provides an open POWER CPU, but building a full ASIC SoC remains challenging due to manual integration, memory wiring, and flow debugging. Proprietary POWER options are costly and closed, while RISC-V thrives with generators like Chipyard. MicroWatt-LX bridges this gap by transforming Microwatt + LiteX into a reusable, Python-configurable ASIC platform with tested peripherals and OpenFrame compatibility.
 
-### Key Value Propositions:
+### Key Values:
 
-Even with Microwatt open-sourced, building a POWER ASIC is nearly impossible for most developers:
-
-- Raw Microwatt requires months of manual integration, custom memory wiring, and ASIC flow debugging
-- Proprietary cores are closed, costly, and inaccessible to researchers or startups
-- RISC-V dominates because tooling and generators exist, while POWER lacks the same open ASIC ecosystem
-
-**The missing piece isn’t the CPU core, it’s a SoC generator and verified ecosystem.**
-
-### Python-to-Silicon POWER Pipeline (via LiteX)
-
-We are the first to deliver a Python → POWER ASIC flow. LiteX already enables Python-based SoC generation, and we extend it with ASIC-verified configuration. 
-#### **Why LiteX Matters:** 
-LiteX's Python-based abstraction allows developers to configure a Linux-capable POWER SoC in minutes, not months. This democratizes access to ASIC design, allowing innovators to focus on their unique value (e.g., custom accelerators) instead of the complexities of memory controllers and bus arbitration.
-
-### ASIC-Verified Peripheral Library (via LiteX + ChipFoundry SRAM)
-
-We provide the first ASIC-verified peripheral library for POWER SoCs, built on proven LiteX IP blocks and ChipFoundry’s professional SRAM macros.
-
+- **Python-to-Silicon Pipeline:** LiteX enables rapid SoC configuration (e.g., Linux-capable in minutes), letting users focus on innovations like custom accelerators rather than bus or memory details.
+- **ASIC-Verified Peripherals**: First library of production-ready IP for POWER SoCs, using LiteX blocks and ChipFoundry SRAM macros.
+- **Community Enablement:** OpenFrame-ready template for shuttles, education, and research, fostering OpenPOWER ASIC collaboration.
+- **Hackathon Fit:** Demonstrates Microwatt's potential in open computing, with extensions for useful integrations (e.g., sensor interfaces per contest examples).
 ### OpenFrame-Ready POWER Platform (Stretch Goal)
 
 As a stretch goal, we package MicroWatt-LX as the first OpenFrame-ready POWER template, enabling:
@@ -73,7 +59,7 @@ The MicroWatt-LX SoC will be constructed around a central Wishbone bus, managed 
 | Component | Specification | Implementation | Benefits |
 |-----------|---------------|----------------|----------|
 | CPU Core | 64-bit POWER ISA | Unmodified Microwatt VHDL | Proven, Linux-capable, FPU+MMU |
-| Memory System | 1-16MB SRAM | ChipFoundry professional macros | Production-grade, characterized |
+| Memory System | 128k-1MB SRAM | ChipFoundry professional macros | Production-grade, characterized |
 | Interconnect | Wishbone Bus | LiteX-generated, ASIC-optimized | Mature, well-documented |
 | Peripherals | UART, SPI, GPIO, Timers | LiteX standard IP blocks | Production-ready drivers | 
 Extension|Custom accelerator slot|Documented interface|Future innovation
@@ -87,7 +73,7 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 ### Target Specifications:
 
 - **Clock Frequency**: 50-100MHz (conservatively designed for first-pass success)
-- **Memory Configuration:** 1MB to 16MB SRAM (configurable based on application)
+- **Memory Configuration:** 32-256 KB SRAM SRAM (configurable based on application)
 - **Linux Capability**
 - **Power Budget:** <100mW estimated @ 50MHz
 
@@ -170,7 +156,7 @@ Integrating SRAM macros into SKY130 adds DRC and LVS complexity, especially with
 
 **Mitigation Strategy:**
 
-- Begin with 1 MB SRAM macros known to be compatible
+- Begin with 128k SRAM macros known to be compatible
 - Use ChipFoundry-provided SRAM for reliability
 - Run thorough DRC/LVS checks with Magic and KLayout
 - Maintain fallback to smaller internal SRAM + external memory stubs
@@ -223,23 +209,4 @@ By planning for conservative success and leaving room for stretch goals, this pr
 
 ## 6. Project Vision & Impact
 
-### For the Hackathon:
-- Meets Requirements: Microwatt CPU, SKY130 flow, OpenFrame targeting.
-- Practical Deliverables: RTL, testbenches, constraints, docs, demo video.
-- Risk-Managed: Proven components, conservative timing, SRAM flexibility.
-
-### For the Community
-
-MicroWatt-LX is designed as a launchpad: a reusable, extensible POWER-based SoC framework for researchers, students, and startups. It lowers the barrier to ASIC design, enabling others to focus on innovation rather than integration.
-
-### Broader Impact
-
-By making advanced silicon design accessible and reproducible, this project directly advances:
-
-- **Education**: A free, open SoC for learning architecture + ASIC design.
-- **Innovation**: Enabling small teams to experiment with custom chips.
-- **Collaboration**: A shared open-source foundation for POWER-based ASICs.
-
-##  In Summary
-
-MicroWatt-LX is more than an SoC tapeout. It is an open, documented pathway to building POWER-based silicon. By combining Microwatt, LiteX, and ChipFoundry’s SRAM on SKY130, we provide the community with a practical, extensible ASIC starter kit. Our vision is to turn one contest submission into a reusable foundation that accelerates many future projects.
+MicroWatt-LX is a reusable POWER ASIC starter kit, lowering barriers for education, startups, and research. It advances OpenPOWER by enabling custom chips, with deliverables (RTL, testbenches, docs) ensuring reproducibility per contest rules. Our vision is to turn one contest submission into a reusable foundation that accelerates many future projects.
