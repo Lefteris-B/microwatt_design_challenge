@@ -128,27 +128,27 @@ While MicroWatt-LX builds on proven technologies, turning them into a cohesive, 
 **Stretch Success:** The SoC generator is robust, supports multiple configurations, and is packaged for easy use on future ChipFoundry shuttles using OpenFrame. 
 Linux boot is a stretch goal that requires ≥8 MB of RAM or an external DRAM interface.
 
-## 5.2 Generator & Framework Challenges
-### 5.2.1. **Parameterization Complexity**
+### 5.2 Generator & Framework Challenges
+#### 5.2.1. **Parameterization Complexity**
 
 LiteX already supports modular SoC generation, but packaging Microwatt with a broad set of tested peripherals into a reliable, user-facing generator introduces complexity. Python makes configuration easier, but coordinating multiple design options while keeping the ASIC flow stable can lead to corner-case failures.
 
-#### **Mitigation Strategy**:
+##### **Mitigation Strategy**:
 
 - Start with a minimal but tested configuration (Microwatt + UART + SRAM) as the baseline
 - Incrementally add peripherals and verify each configuration in simulation before ASIC flow
 - Provide reference “profiles” (minimal, Linux-capable, extended) to reduce user misconfigurations
-### 5.2.2. VHDL–Verilog Coordination
+#### 5.2.2. VHDL–Verilog Coordination
 
 Microwatt’s VHDL implementation must coexist smoothly within LiteX’s largely Verilog-based ecosystem, which can cause build flow complications for ASIC synthesis.
 
-#### Mitigation Strategy:
+##### Mitigation Strategy:
 - Use GHDL-Yosys front-end for VHDL synthesis.
 - Use the maintained pythondata-cpu-microwatt repositories for VHDL wrapping.
 - Maintain strict separation between VHDL and Verilog components in the build flow.
 - Run comprehensive simulation before handing designs to OpenLane.
 
-### 5.2.3.  ASIC Implementation Challenges
+#### 5.2.3.  ASIC Implementation Challenges
 - **Timing Closure on SKY130**
 
 Achieving timing closure on SKY130 is non-trivial, particularly for larger SoC configurations. Setup/hold issues, fanout, and clock distribution can all require iterative optimization.
@@ -159,7 +159,7 @@ Achieving timing closure on SKY130 is non-trivial, particularly for larger SoC c
 - Incremental timing analysis and optimization (cell sizing, buffering, fanout management)
 - Hierarchical timing closure for complex blocks
 
-### 5.2.4. Memory Macro Integration
+#### 5.2.4. Memory Macro Integration
 
 Integrating SRAM macros into SKY130 adds DRC and LVS complexity, especially with optical proximity and memory-specific design rules.
 
@@ -203,46 +203,46 @@ Bottom metal / service area
 - Leave a routing corridor between the CPU cluster and the macro block for the high-fanout address / data buses (metal1/metal2). Keep the corridor free of macro keepout layers.
 
   
-### 5.2.5. Physical Design & Verification
+#### 5.2.5. Physical Design & Verification
 
 DRC/LVS compliance in OpenLane can be challenging due to antenna effects, PDN design, and corner-case rule interactions.
 
-**Mitigation Strategy**:
+##### **Mitigation Strategy**:
 
 - Reuse proven OpenLane configurations from past SKY130 tapeouts
 - Stage verification (DRC, LVS, antenna) at each checkpoint
 - Allocate dedicated time for iterative fixes in physical verification
 - PDN : Global M3/M4 rails; metal1/2 straps every 50–200 µm; at least 4 via columns per macro VDD pad as starting point; run IR drop.
 
-## 5.3 System-Level Challenges
-### 5.3.1 Power & Performance Balance
+### 5.3 System-Level Challenges
+#### 5.3.1 Power & Performance Balance
 
 Keeping power <100 mW while maintaining Linux-capable performance requires careful synthesis, clock gating, and optimization.
 
-#### Mitigation Strategy:
+##### Mitigation Strategy:
 
 - Conservative power budgeting with margin
 - Power-aware synthesis and PnR
 - Clock gating where beneficial
 - Early power estimation to guide optimization
 
-### 5.3.2 Peripheral Integration & Verification
+#### 5.3.2 Peripheral Integration & Verification
 
 Multiple peripherals (UART, SPI, GPIO, timers) must interoperate reliably on the LiteX Wishbone bus. Bus arbitration and driver correctness require extensive testing.
 
-#### Mitigation Strategy:
+##### Mitigation Strategy:
 
 - Use standard LiteX peripheral IP with known software drivers
 - Incremental integration (core + memory first, then add peripherals)
 - Hardware/software co-verification using test programs
 
-### Software
+#### Software
 
 - Cross toolchain: gcc-powerpc64le-linux-gnu
 - Baseline: baremetal hello + memtest
 - Next: U-Boot port (board/microwatt_lx), defconfig, build with CROSS_COMPILE
 - Stretch: U-Boot netboot to Microwatt Linux (mainline supports Microwatt)
-### 5.4 Success Probability Assessment
+#### 5.4 Success Probability Assessment
 
 Despite these risks, MicroWatt-LX has a high likelihood of success because:
 
