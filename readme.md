@@ -68,7 +68,7 @@ The MicroWatt-LX SoC will be constructed around a central Wishbone bus, managed 
 
 | Component | Specification | Implementation | Benefits |
 |-----------|---------------|----------------|----------|
-| CPU Core | 64-bit POWER ISA | Unmodified Microwatt VHDL | Proven, Linux-capable, FPU+MMU |
+| CPU Core | 64-bit POWER ISA | Unmodified Microwatt VHDL | FPGA Proven |
 | Memory System | 32KB-1MB SRAM | ChipFoundry professional macros | Production-grade, characterized |
 | Interconnect | Wishbone Bus | LiteX-generated, ASIC-optimized | Mature, well-documented |
 | Peripherals | UART, SPI, GPIO, Timers | LiteX standard IP blocks | Production-ready drivers | 
@@ -265,6 +265,6 @@ By planning for conservative success and leaving room for stretch goals, this pr
 
 ## 7. Project Vision & Impact
 
-MicroWatt-LX is a reusable POWER ASIC starter kit, lowering barriers for education, startups, and research. It advances OpenPOWER by enabling custom chips, with deliverables (RTL, testbenches, docs) ensuring reproducibility per contest rules. Our vision is to turn one contest submission into a reusable foundation that accelerates many future projects.
+MicroWatt-LX is a reusable POWER ASIC starter kit, lowering barriers for education, startups, and research. It advances OpenPOWER by enabling custom chips, with deliverables (RTL, testbenches, docs) ensuring reproducibility. Our vision is to turn one contest submission into a reusable foundation that accelerates many future projects.
 
 MicroWatt-LX will deliver a verified, reproducible baseline SoC (Microwatt + LiteX) that boots baremetal/U-Boot from internal SRAM with UART I/O.  The repo will include smoke synthesis, simulation, software tests and SRAM/floorplan artifacts so judges can reproduce and validate the baseline.
