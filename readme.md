@@ -181,13 +181,13 @@ Below is a small, practical floorplan for a single-core MicroWatt-LX in SKY130 w
 +---------------------------------------------------------------+
 |                           Padframe                            |
 |  +---------------------------------------------------------+  |
-|  |  IO Left  |  Core & Std Cells  |  SRAM Macro Region     |  |
-|  |  Pads     |  (Microwatt + AXI/  |  (grouped macros,     |  |
+|  |  IO Left  |  Core & Std Cells    |  SRAM Macro Region   |  |
+|  |  Pads     |  (Microwatt + AXI/   |  (grouped macros,    |  |
 |  |           |   LiteX interconnect)|  mirrored rows)      |  |
-|  |           |                     |                       |  |
-|  |           |                     |  [SRAM block A]       |  |
-|  |           |     CPU Cluster     |  [SRAM block B]       |  |
-|  |           |  (Microwatt + L2)   |  [SRAM block C]       |  |
+|  |           |                      |                      |  |
+|  |           |                      |  [SRAM block A]      |  |
+|  |           |     CPU Cluster      |  [SRAM block B]      |  |
+|  |           |  (Microwatt + L2)    |  [SRAM block C]      |  |
 |  |  Power    |  +--Cache/Periph--+  |  [SRAM block D]      |  |
 |  |  straps   |  | UART, SPI, ETH |  |                      |  |
 |  |  & PDN    |  +-----------------+  +---------------------+  |
