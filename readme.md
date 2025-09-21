@@ -94,7 +94,7 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 
 ### Critical Milestones
 
-| Week | Milestone | Success Criteria | Decision Point |
+| # | Milestone | Success Criteria | Decision Point |
 |------|-----------|------------------|----------------|
 | 1 | Baseline RTL + Simulation | Microwatt + LiteX + 32KB SRAM boots baremetal hello over UART in simulation | Move to ASIC flow |
 | 2 | Baseline ASIC Flow | OpenLane synthesis + place & route complete, clean precheck for Profile A (Quarantined Minimal) | Freeze baseline for tapeout |
@@ -104,41 +104,15 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 ---
 
 ### Weekly Breakdown
-
-gantt
-    title MicroWatt-LX — Week-by-week Gantt (Sep 22 — Nov 3, 2025)
-    dateFormat  YYYY-MM-DD
-    axisFormat  %d %b
-    %% Project Setup
-    section Project Setup
-    SRAM confirmation              :crit, setup1, 2025-09-22, 2025-09-24
-    Repo & CI bootstrap            :setup2, 2025-09-22, 2025-09-28
-
-    %% RTL & Simulation track
-    section RTL & Simulation
-    GHDL→Yosys smoke synth         :active, rtl1, 2025-09-22, 2025-09-28
-    Verilator integration & sim    :rtl2, 2025-09-29, 2025-10-05
-    Testbench expansion & coverage :rtl3, 2025-10-06, 2025-10-12
-    SDF/back-annotated test        :rtl4, 2025-10-13, 2025-10-19
-
-    %% P&R & Verification track
-    section P&R & Verification
-    Floorplan & PDN prep           :crit, pr1, 2025-09-29, 2025-10-05
-    OpenLane first-pass P&R        :pr2, 2025-10-06, 2025-10-19
-    DRC/LVS iteration(s)           :pr3, 2025-10-20, 2025-10-26
-    Precheck & signoff artifacts   :pr4, 2025-10-27, 2025-11-02
-
-    %% Software & Linux path track
-    section Software & Linux path
-    Baremetal "hello" (build/test) :sw1, 2025-09-22, 2025-09-28
-    U-Boot port / kernel emulation :sw2, 2025-10-06, 2025-10-26
-    Boot logs, images & artifacts  :sw3, 2025-10-27, 2025-11-02
-
-    %% OpenFrame & Packaging track
-    section OpenFrame & Packaging
-    OpenFrame padframe mapping     :pkg1, 2025-10-13, 2025-10-26
-    Video, docs, reproducibility  :pkg2, 2025-10-27, 2025-11-02
-    Final submission (milestone)   :milestone, m1, 2025-11-03, 1d
+| Week           | Focus                                  | Objectives                                                             | Key Activities                                                                                                                 | Deliverables                                                                         |
+| -------------- | -------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| **Week 1**     | Baseline RTL & Simulation              | Confirm SRAM macro; bootstrap repo & CI; smoke synth + baremetal hello | Confirm macro/license; repo + LICENSE; pin tool versions; GHDL→Yosys smoke; build `hello.elf`; basic Verilator run             | SRAM confirmation note; CI scaffold; smoke synth logs; `hello.elf`; Verilator logs   |
+| **Week 2**     | ASIC flow prep (floorplan & PDN)       | Prepare floorplan/PDN; generate synthesis/netlist                      | Create floorplan + PDN notes; prepare SDC; run synthesis; triage VHDL/interop issues                                           | Floorplan image; PDN notes; SDC file; synthesis report; issue list                   |
+| **Week 3**     | First-pass P\&R & verification         | Run P\&R iteration; expand test coverage; start U-Boot scaffold        | First-pass P\&R; timing report; add testbenches; conservative clock/CTS; U-Boot repo skeleton                                  | P\&R results + timing; expanded test suite; CTS plan; U-Boot skeleton                |
+| **Week 4**     | Back-annotated sim & OpenFrame mapping | SDF sims for baseline; finalize padframe/pinout                        | Extract SDF; run back-annotated sims; finalize padframe pin mapping; update floorplan                                          | SDF sim logs + wave snippets; padframe mapping file; updated floorplan               |
+| **Week 5**     | DRC/LVS & Linux emulation              | Clear DRC/LVS issues; demo U-Boot/Linux in emulation (stretch)         | Run DRC/LVS/antenna/IR checks; iterate fixes; prepare precheck artifacts; run Linux in QEMU/FPGA                               | DRC/LVS reports; precheck bundle; OpenLane logs; Linux boot log (emul.)              |
+| **Week 6**     | Packaging & submission prep            | Package artifacts; produce demo video; verify reproduction steps       | Produce demo video/screenshots; finalize README + reproducible steps; re-run CI; create submission bundle; dry-run judge steps | Final repo + artifacts; demo video; zipped submission bundle; reproduction checklist |
+| **Submission** | Final milestone                        | Upload to contest portal; confirm receipt                              | Upload bundle; capture confirmation; tag release                                                                               | Submission confirmation screenshot; GitHub release tag                               |
 
 
 ## 5. Technical Difficulties & Risk Mitigation
