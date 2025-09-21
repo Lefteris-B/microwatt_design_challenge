@@ -11,7 +11,7 @@ An extensible, open-source framework built on Microwatt and LiteX to create para
 [![alt text](https://img.shields.io/badge/CPU-Microwatt%20POWER-blue)](https://git.openpower.foundation/cores/microwatt)
 [![alt text](https://img.shields.io/badge/Framework-LiteX-orange)](https://github.com/enjoy-digital/litex)
 [![alt text](https://img.shields.io/badge/PDK-SKY130-green)](https://skywater-pdk.readthedocs.io/en/main/index.html)
-[![CI - Smoke](https://img.shields.io/badge/CI-SMOKE-green)](https://github.com/Lefteris-B/microwatt_design_challenge/actions/workflows/ci-smoke.yml)
+[![CI - Smoke](https://img.shields.io/badge/CI-SMOKE%20TEST-green)](https://github.com/Lefteris-B/microwatt_design_challenge/actions/workflows/ci-smoke.yml)
 
 ## 1. Project Summary
 This project delivers MicroWatt-LX: a fully-documented, parameterizable SoC generator that transforms a Python configuration into a tapeout-ready POWER ASIC on SKY130, built on Microwatt and LiteX.
@@ -27,15 +27,23 @@ Microwatt provides an open POWER CPU, but building a full ASIC SoC remains chall
 - **Python-to-Silicon Pipeline:** LiteX enables rapid SoC configuration, letting users focus on innovations like custom accelerators rather than bus or memory details.
 - **ASIC-Verified Peripherals**: First library of production-ready IP for POWER SoCs, using LiteX blocks and ChipFoundry SRAM macros.
 - **Community Enablement:** OpenFrame-ready template for shuttles, education, and research, fostering OpenPOWER ASIC collaboration.
-- **Hackathon Fit:** Demonstrates Microwatt's potential in open computing, with extensions for useful integrations (e.g., sensor interfaces).
-### OpenFrame-Ready POWER Platform (Stretch Goal)
+### Targeted Generator Templates 
+To fit contest constraints and time, we propose **three profiles from the same generator**:
 
-As a stretch goal, we package MicroWatt-LX as the first OpenFrame-ready POWER template, enabling:
+### (A) Baseline
+- Microwatt + 32KB ChipFoundry SRAM macro + UART  
+- Fully PnR’d and precheck-validated 
+- Boots baremetal “hello” via UART  
 
-- Reusable POWER shuttle submissions
-- Standardized platform for research and education
-- Shared community infrastructure for future POWER designs
+### (B) OpenFrame Build
+- Same RTL configured for ChipFoundry OpenFrame user area (padframe + power straps)  
+- Demonstrates OpenFrame compliance  
+- Minimal extra PnR work (reuse baseline floorplan where possible)  
 
+### (C) OpenFrame + External RAM (Linux Candidate)
+- Adds LiteX external RAM controller (QSPI/PSRAM/SD)  
+- U-Boot + Linux boot path demonstrated in emulation/FPGA with external RAM  
+- Shows Linux capability without requiring impractically large on-chip SRAM  
 ## 3. Proposed Architecture
 
 The MicroWatt-LX SoC will be constructed around a central Wishbone bus, managed by LiteX.
@@ -61,7 +69,7 @@ The MicroWatt-LX SoC will be constructed around a central Wishbone bus, managed 
 | Component | Specification | Implementation | Benefits |
 |-----------|---------------|----------------|----------|
 | CPU Core | 64-bit POWER ISA | Unmodified Microwatt VHDL | Proven, Linux-capable, FPU+MMU |
-| Memory System | 128k-1MB SRAM | ChipFoundry professional macros | Production-grade, characterized |
+| Memory System | 32KB-1MB SRAM | ChipFoundry professional macros | Production-grade, characterized |
 | Interconnect | Wishbone Bus | LiteX-generated, ASIC-optimized | Mature, well-documented |
 | Peripherals | UART, SPI, GPIO, Timers | LiteX standard IP blocks | Production-ready drivers | 
 Extension|Custom accelerator slot|Documented interface|Future innovation
@@ -75,8 +83,7 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 ### Target Specifications:
 
 - **Clock Frequency**: 50-100MHz (conservatively designed for first-pass success)
-- **Memory Configuration:** 32-256 KB SRAM SRAM (configurable based on application)
-- **Linux Capability**
+- **Memory Configuration:** 32KB - 1MB SRAM SRAM (configurable based on application)
 - **Power Budget:** <100mW estimated @ 50MHz
 
 #### Fallback Memory Plan:
@@ -85,29 +92,54 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 
 ## 4. Implementation Timeline
 
-### **Critical Milestones & Decision Points**
+### Critical Milestones
 
-| Milestone | Week | Criteria | Go/No-Go Decision |
-|-----------|------|----------|-------------------|
-| Foundation Complete | 1 | SoC simulation working | Continue to implementation |
-| System Integration | 2 | Linux boots successfully | Proceed with ASIC flow |
-| ASIC Validation | 3 | Clean DRC/LVS results | Evaluate stretch goals |
-| Platform Decision | 3 | Schedule assessment | OpenFrame platform or polish |
-### **Detailed Weekly Breakdown**
+| Week | Milestone | Success Criteria | Decision Point |
+|------|-----------|------------------|----------------|
+| 1 | Baseline RTL + Simulation | Microwatt + LiteX + 32KB SRAM boots baremetal hello over UART in simulation | Move to ASIC flow |
+| 2 | Baseline ASIC Flow | OpenLane synthesis + place & route complete, clean precheck for Profile A (Quarantined Minimal) | Freeze baseline for tapeout |
+| 3 | OpenFrame & External RAM | Map baseline to OpenFrame padframe; add external RAM controller; show U-Boot/Linux boot log in emulation | Stretch goals validated |
+| 4 | Documentation & Submission | All artifacts (CI logs, testbenches, PnR reports, video) ready | Final contest submission |
 
-| Week | Phase | Days | Objectives | Key Activities | Deliverables |
-|------|-------|------|------------|----------------|--------------|
-| 1 | Foundation | 1-3 | Establish core integration | Microwatt-LiteX setup<br>SRAM macro integration<br>Basic simulation | Working SoC simulation |
-|  |  | 4-5 | Peripheral integration | UART, GPIO, SPI setup<br>Driver development<br>Testing framework | Basic I/O functionality |
-|  |  | 6-7 | ASIC flow setup | OpenLane configuration<br>Initial synthesis<br>Constraint development | Synthesis validation |
-| 2 | Implementation   | 8 -12 | System Integration |  Baremetal/U-Boot boots to UART from internal SRAM (Linux is a documented stretch goal requiring external DRAM or ≥8 MB on-chip) | Proceed with ASIC flow
-|  |  | 13-14 | ASIC optimization | Timing closure work<br>Power optimization<br>Multiple configs | Optimized ASIC design |
-| 3 | Production | 15-17 | GDSII generation | Complete PnR flow<br>DRC/LVS validation<br>Final verification | Production GDSII |
-|  |  | 18-19 | Characterization | Performance benchmarks<br>Resource analysis<br>Comparison studies | Technical metrics |
-|  |  | 20-21 | Documentation | Tutorial creation<br>API documentation<br>User guides | Complete docs |
-| 4 | Platform (Stretch) | 22-24 | Framework dev | User project area<br>Template creation<br>Integration tools | Platform framework |
-|  |  | 25-26 | OpenFrame integration | Shuttle optimization<br>Community tools<br>Testing | Community platform |
-|  |  | 27-28 | Release prep | Final validation<br>Video creation<br>Community release | Public release |
+---
+
+### Weekly Breakdown
+
+gantt
+    title MicroWatt-LX — Week-by-week Gantt (Sep 22 — Nov 3, 2025)
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d %b
+    %% Project Setup
+    section Project Setup
+    SRAM confirmation              :crit, setup1, 2025-09-22, 2025-09-24
+    Repo & CI bootstrap            :setup2, 2025-09-22, 2025-09-28
+
+    %% RTL & Simulation track
+    section RTL & Simulation
+    GHDL→Yosys smoke synth         :active, rtl1, 2025-09-22, 2025-09-28
+    Verilator integration & sim    :rtl2, 2025-09-29, 2025-10-05
+    Testbench expansion & coverage :rtl3, 2025-10-06, 2025-10-12
+    SDF/back-annotated test        :rtl4, 2025-10-13, 2025-10-19
+
+    %% P&R & Verification track
+    section P&R & Verification
+    Floorplan & PDN prep           :crit, pr1, 2025-09-29, 2025-10-05
+    OpenLane first-pass P&R        :pr2, 2025-10-06, 2025-10-19
+    DRC/LVS iteration(s)           :pr3, 2025-10-20, 2025-10-26
+    Precheck & signoff artifacts   :pr4, 2025-10-27, 2025-11-02
+
+    %% Software & Linux path track
+    section Software & Linux path
+    Baremetal "hello" (build/test) :sw1, 2025-09-22, 2025-09-28
+    U-Boot port / kernel emulation :sw2, 2025-10-06, 2025-10-26
+    Boot logs, images & artifacts  :sw3, 2025-10-27, 2025-11-02
+
+    %% OpenFrame & Packaging track
+    section OpenFrame & Packaging
+    OpenFrame padframe mapping     :pkg1, 2025-10-13, 2025-10-26
+    Video, docs, reproducibility  :pkg2, 2025-10-27, 2025-11-02
+    Final submission (milestone)   :milestone, m1, 2025-11-03, 1d
+
 
 ## 5. Technical Difficulties & Risk Mitigation
 
