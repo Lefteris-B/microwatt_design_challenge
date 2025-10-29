@@ -1,3 +1,7 @@
+########################################################################################
+# Example environment setup script for Caravel Management SoC env vars with LiteX and Microwatt #
+########################################################################################
+
 #!/bin/bash
 
 # Define base directory as the current working directory when the script is executed
