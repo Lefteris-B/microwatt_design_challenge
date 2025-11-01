@@ -16,6 +16,10 @@ An extensible, open-source framework built on Microwatt and LiteX to create para
 ## 1. Project Summary
 This project delivers MicroWatt-LX: a fully-documented, parameterizable SoC generator that transforms a Python configuration into a tapeout-ready POWER ASIC on SKY130, built on Microwatt and LiteX.
 
+## Video - Demo presentation
+
+- https://youtu.be/KdZCAlcoooA?si=26RIcjenOqOtYPUV
+
 ## 2. Core Idea & Value Proposition
 
 ### From CPU Integration → Reusable SoC Generator
@@ -114,9 +118,7 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 | **Week 6**     | Packaging & submission prep            | Package artifacts; produce demo video; verify reproduction steps       | Produce demo video/screenshots; finalize README + reproducible steps; re-run CI; create submission bundle; dry-run judge steps | Final repo + artifacts; demo video; zipped submission bundle; reproduction checklist |
 | **Submission** | Final milestone                        | Upload to contest portal; confirm receipt                              | Upload bundle; capture confirmation; tag release                                                                               | Submission confirmation screenshot; GitHub release tag                               |
 
-## Videos
 
- [Watch Video](src="https://github.com/Lefteris-B/microwatt_design_challenge/blob/main/videos/litex%20core%20build.mp4")
 
 ## 5. Technical Difficulties & Risk Mitigation
 
