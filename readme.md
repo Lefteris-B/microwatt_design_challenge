@@ -18,9 +18,9 @@ This project delivers MicroWatt-LX: a fully-documented, parameterizable SoC gene
 
 ## Video - Demo presentation
 
-- https://youtu.be/KdZCAlcoooA?si=26RIcjenOqOtYPUV
-
-- <a href="https://youtu.be/KdZCAlcoooA?si=26RIcjenOqOtYPUV" target="_blank"></a>
+- [Video presenting verilog generation and uploading bitstream to FPGA (Digilent Nexys 4 100T-xc7al0et)](https://www.youtube.com/watch?v=KdZCAlcoooA)
+- [Simulating Core -> running LiteX bios -> connecting to UART](https://www.youtube.com/watch?v=4e1k-80p-Ws)
+- 
 
 ## 2. Core Idea & Value Proposition
 
