@@ -1,0 +1,4 @@
+Memory Regions:
+main_ram: 0x00000000 - 0x00000fff
+uart: 0xc0000000 - 0xc00003ff
+csr: 0xc8000000 - 0xc800ffff
