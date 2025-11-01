@@ -114,7 +114,9 @@ Extension|Custom accelerator slot|Documented interface|Future innovation
 | **Week 6**     | Packaging & submission prep            | Package artifacts; produce demo video; verify reproduction steps       | Produce demo video/screenshots; finalize README + reproducible steps; re-run CI; create submission bundle; dry-run judge steps | Final repo + artifacts; demo video; zipped submission bundle; reproduction checklist |
 | **Submission** | Final milestone                        | Upload to contest portal; confirm receipt                              | Upload bundle; capture confirmation; tag release                                                                               | Submission confirmation screenshot; GitHub release tag                               |
 
-
+## Videos
+<video src="https://github.com/Lefteris-B/microwatt_design_challenge/blob/main/videos/litex%20core%20build.mp4" controls>
+</video>
 ## 5. Technical Difficulties & Risk Mitigation
 
 While MicroWatt-LX builds on proven technologies, turning them into a cohesive, parameterizable SoC generator suitable for ASIC requires navigating several technical challenges. Careful planning and fallback options are essential to ensure success.
