@@ -20,6 +20,8 @@ This project delivers MicroWatt-LX: a fully-documented, parameterizable SoC gene
 
 - https://youtu.be/KdZCAlcoooA?si=26RIcjenOqOtYPUV
 
+- <a href="https://youtu.be/KdZCAlcoooA?si=26RIcjenOqOtYPUV" target="_blank"></a>
+
 ## 2. Core Idea & Value Proposition
 
 ### From CPU Integration → Reusable SoC Generator
