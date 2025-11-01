@@ -5,38 +5,32 @@ Direct Verilog generation for Caravel integration
 """
 
 import os
-import sys
 import argparse
 from migen import *
 from migen.genlib.record import Record
-from migen.fhdl import verilog
 
-from litex.gen import *
 from litex.build.generic_platform import GenericPlatform, Pins, Subsignal
 from litex.soc.integration.soc_core import *
 from litex.soc.integration.soc import SoCRegion
-from litex.soc.integration.builder import *
 from litex.soc.interconnect import wishbone
-from litex.soc.interconnect.csr import *
+from litex.soc.integration.builder import *
 
 # Custom Memory Region for ChipFoundry SRAM
 class ChipFoundrySRAM(Module):
     """
-    Wrapper for ChipFoundry SRAM_1024x32 macro
+    Wrapper for ChipFoundry CF_SRAM_1024x32_wb_wrapper
     - 1024 words x 32 bits = 4KB total
     - Native Wishbone interface
     """
     def __init__(self):
         self.bus = wishbone.Interface(data_width=32, adr_width=10)  # 10 bits for 1024 words
         
-        # Create instance of the ChipFoundry SRAM
-        # The macro expects: clk, reset, wishbone signals
-        self.specials += Instance("SRAM_1024x32",
-            # Clock and Reset
+        # Create instance of the ChipFoundry SRAM Wishbone Wrapper
+        self.specials += Instance("CF_SRAM_1024x32_wb_wrapper",
+            # Wishbone interface signals
             i_wb_clk_i  = ClockSignal("sys"),
             i_wb_rst_i  = ResetSignal("sys"),
             
-            # Wishbone slave interface
             i_wb_adr_i  = self.bus.adr,
             i_wb_dat_i  = self.bus.dat_w,
             o_wb_dat_o  = self.bus.dat_r,
@@ -45,44 +39,53 @@ class ChipFoundrySRAM(Module):
             i_wb_cyc_i  = self.bus.cyc,
             i_wb_stb_i  = self.bus.stb,
             o_wb_ack_o  = self.bus.ack,
-            o_wb_err_o  = Signal(),  # Create a signal for err
         )
+        # Tie off err signal - wrapper doesn't provide it
+        self.comb += self.bus.err.eq(0)
 
 # Custom UART wrapper for ChipFoundry UART
 class ChipFoundryUART(Module):
     """
-    Wrapper for ChipFoundry CF_UART macro
+    Wrapper for ChipFoundry CF_UART_WB (Wishbone wrapper)
     Wishbone-compatible UART peripheral
     """
     def __init__(self, pads, clk_freq=50e6, baudrate=115200):
-        self.bus = wishbone.Interface(data_width=32, adr_width=3)  # Typically 8 registers max
+        # Use narrow address width - upper bits will be ignored by decoder
+        # We only need to decode to register 0xff10, but use 8 bits for simplicity
+        # This gives us 256 word addresses = 1KB region (efficient for ASIC)
+        self.bus = wishbone.Interface(data_width=32, adr_width=8)
         
-        # Calculate baudrate divisor
-        divisor = int(clk_freq / (baudrate * 16))
+        # Interrupt signal
+        self.irq = Signal()
         
-        # Create instance of ChipFoundry UART
-        self.specials += Instance("CF_UART",
-            # Clock and Reset
-            i_wb_clk_i  = ClockSignal("sys"),
-            i_wb_rst_i  = ResetSignal("sys"),
+        # Create instance of ChipFoundry UART Wishbone Wrapper
+        # Port names from CF_UART_WB (note: clk_i not wb_clk_i!)
+        self.specials += Instance("CF_UART_WB",
+            # Clock and reset
+            i_clk_i     = ClockSignal("sys"),
+            i_rst_i     = ResetSignal("sys"),
             
-            # Wishbone slave interface
-            i_wb_adr_i  = self.bus.adr,
-            i_wb_dat_i  = self.bus.dat_w,
-            o_wb_dat_o  = self.bus.dat_r,
-            i_wb_sel_i  = self.bus.sel,
-            i_wb_we_i   = self.bus.we,
-            i_wb_cyc_i  = self.bus.cyc,
-            i_wb_stb_i  = self.bus.stb,
-            o_wb_ack_o  = self.bus.ack,
+            # Wishbone interface
+            # Note: CF_UART_WB expects 16-bit address internally
+            # We pass 8 bits, and it will only decode what it needs
+            i_adr_i     = self.bus.adr,
+            i_dat_i     = self.bus.dat_w,
+            o_dat_o     = self.bus.dat_r,
+            i_sel_i     = self.bus.sel,
+            i_we_i      = self.bus.we,
+            i_cyc_i     = self.bus.cyc,
+            i_stb_i     = self.bus.stb,
+            o_ack_o     = self.bus.ack,
             
-            # UART external signals
+            # UART serial interface
             i_rx        = pads.rx,
             o_tx        = pads.tx,
             
-            # Configuration parameter
-            p_DIVISOR   = divisor,
+            # Interrupt output
+            o_IRQ       = self.irq,
         )
+        # CF_UART_WB doesn't have err signal
+        self.comb += self.bus.err.eq(0)
 
 def main():
     parser = argparse.ArgumentParser(description="MicroWatt SoC Verilog Generator")
@@ -95,62 +98,56 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
     os.makedirs(os.path.join(args.output_dir, "gateware"), exist_ok=True)
     
-    # Create minimal platform
-    from litex.build import tools
-    from litex.build.generic_platform import GenericPlatform
-    
+    # Create minimal platform for Verilog generation (matches Caravel pins)
     platform = GenericPlatform("sky130", [
         ("clk", 0, Pins("wb_clk_i")),
         ("rst", 0, Pins("wb_rst_i")),
         ("serial", 0,
-            Subsignal("tx", Pins("io_out_0")),
-            Subsignal("rx", Pins("io_in_1")),
+            Subsignal("tx", Pins("io_out[0]")),  # Caravel IO mapping
+            Subsignal("rx", Pins("io_in[1]")),
         ),
     ])
     
     # Create SoC with MicroWatt
     soc_kwargs = dict(
         platform           = platform,
-        clk_freq           = int(args.sys_clk_freq),  # Changed from sys_clk_freq
+        clk_freq           = int(args.sys_clk_freq),
         cpu_type           = "microwatt",
-        cpu_variant        = "standard",
+        cpu_variant        = "standard+ghdl",
         cpu_reset_address  = 0x00000000,
-        integrated_sram_size = 0,
-        integrated_rom_size  = 0,
-        uart_name           = "stub",
+        integrated_sram_size = 0,  # Use external SRAM
+        integrated_rom_size  = 0,  # No ROM; load via UART/debug
+        uart_name          = "stub",  # Disable built-in UART
     )
     
     soc = SoCCore(**soc_kwargs)
     
-    # Add ChipFoundry SRAM
+    # Add ChipFoundry SRAM as main RAM
     cf_sram = ChipFoundrySRAM()
     soc.submodules.cf_sram = cf_sram
-    sram_region = SoCRegion(origin=0x00000000, size=0x1000, cached=True)
+    sram_region = SoCRegion(origin=0x00000000, size=0x1000, cached=True)  # 4KB
     soc.bus.add_slave(name="main_ram", slave=cf_sram.bus, region=sram_region)
     
     # Add ChipFoundry UART
-    # Create dummy pads for now
-    uart_pads = Record([("tx", 1), ("rx", 1)])
+    uart_pads = platform.request("serial")
     cf_uart = ChipFoundryUART(uart_pads, clk_freq=args.sys_clk_freq, baudrate=115200)
     soc.submodules.cf_uart = cf_uart
-    uart_region = SoCRegion(origin=0xc0000000, size=0x20, cached=False)
+    # Allocate 1KB region (256 x 32-bit words) - much more ASIC-friendly
+    # This covers all UART registers with partial address decoding
+    uart_region = SoCRegion(origin=0xc0000000, size=0x400, cached=False)  # 1KB
     soc.bus.add_slave(name="uart", slave=cf_uart.bus, region=uart_region)
     
-    # Export Verilog
-    # Build the SoC to generate Verilog
-    from litex.build.tools import write_to_file
-    from migen.fhdl.verilog import convert
-    
-    # Finalize the SoC
+    # Finalize and export Verilog
     soc.finalize()
     
-    # Convert to Verilog
-    verilog_text = convert(soc, ios=set(), name="microwatt_soc").main_source
+    from migen.fhdl.verilog import convert
+    ios = {platform.request("clk"), platform.request("rst"), uart_pads.tx, uart_pads.rx}
+    verilog_text = convert(soc, ios=ios, name="microwatt_soc")
     
     # Write Verilog file
     verilog_file = os.path.join(args.output_dir, "gateware", "microwatt_soc.v")
     with open(verilog_file, "w") as f:
-        f.write(verilog_text)
+        f.write(str(verilog_text))
     
     # Generate memory regions info
     mem_regions_file = os.path.join(args.output_dir, "mem_regions.txt")
@@ -171,9 +168,10 @@ def main():
     for name, region in soc.bus.regions.items():
         print(f"  {name:15} @ 0x{region.origin:08x} [{region.size:>8} bytes]")
     print("\nNext Steps:")
-    print("1. Copy ChipFoundry SRAM and UART Verilog files")
-    print("2. Create top-level wrapper for Caravel")
-    print("3. Run synthesis with OpenLane")
+    print("1. Install IPs: ipm install CF_SRAM_1024x32 && ipm install CF_UART")
+    print("2. Ensure wrapper files are in verilog/rtl/")
+    print("3. Integrate generated microwatt_soc.v into Caravel user project wrapper")
+    print("4. Run OpenLane for hardening")
 
 if __name__ == "__main__":
     main()
