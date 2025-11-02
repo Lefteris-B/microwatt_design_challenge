@@ -12,12 +12,6 @@
 
 This final submission presents **MicroWatt-LX**, an extensible, open-source framework for generating parameterizable SoCs based on the [Microwatt](https://git.openpower.foundation/cores/microwatt) POWER CPU and [LiteX](https://github.com/enjoy-digital/litex) ecosystem, targeted at the [SKY130 PDK ](https://skywater-pdk.readthedocs.io/) using [ChipFoundry's Caravel User Project and OpenFrame](https://chipfoundry.io/soc_platforms). The project delivers a Python-driven pipeline that transforms simple configurations into *tapeout-ready ASICs*, complete with tested peripherals and a documented flow.
 
-To achieve this, I developed **two complementary repositories**:
-- **[chipfoundry/caravel_mgmt_soc_litex (forked and modified)](https://github.com/chipfoundry/caravel_mgmt_soc_litex)**: Replaced the original VexRISC CPU with Microwatt while retaining the existing memory and peripherals. This provides a drop-in upgrade for POWER-based designs in the Caravel harness.
-- **[Lefteris-B/microwatt_design_challenge](https://github.com/Lefteris-B/microwatt_design_challenge)**: A flexible LiteX-based SoC generator framework. As a proof-of-concept (PoC), it integrates ChipFoundry's proprietary SRAM macro [](https://github.com/chipfoundry/CF_UART), enabling arbitrary SoC configurations.
-
-Both repositories include simulation, synthesis, and PnR flows, with demonstrations of bare-metal booting via UART. This submission aligns with the proposal's profiles: (A) Baseline, (B) Caravel User Project (PoC), and partial (C) OpenFrame Build (Caravel Management SoC with Litex)
-
 ## 2. Achievements & Value Proposition
 
 ### From Proposal to Implementation
@@ -44,6 +38,8 @@ The original proposal outlined a reusable SoC generator to bridge the gap in ope
   - [**(C) OpenFrame Build (Caravel Management SoC with Litex)**](/Documentation/OpenFrame_Build_(Caravel_Management_SoC_with_Litex).md)
 
 ## Video Demonstrations
+
+I have included demonstration videos that verify my design’s ability to build a microwatt core, generate the bitstream required to simulate FPGA digital functionality, and execute binary code and memory tests . Confirming the full functional verification of my work for the hackathon
 
 - [Verilog generation and FPGA bitstream upload (Digilent Nexys 4 100T-xc7a100t)](https://www.youtube.com/watch?v=KdZCAlcoooA)
 - [Core simulation running LiteX BIOS and UART connection](https://www.youtube.com/watch?v=4e1k-80p-Ws)
@@ -119,15 +115,12 @@ Success probability was high due to proven blocks; fallbacks ensured progress.
 ## 6. Setup & Reproduction
 
 ### Requirements
-- Python 3, LiteX, OpenLane (SKY130), Verilator/GHDL.
-- Clone repos: [caravel_mgmt_soc_litex](https://github.com/chipfoundry/caravel_mgmt_soc_litex) and [microwatt_design_challenge](https://github.com/Lefteris-B/microwatt_design_challenge).
-
-### Quick Start (Baseline)
-1. `python soc_generator.py --config minimal` (generates RTL).
-2. Run simulation: `verilator -cc microwatt_wrapper.v`.
-3. PnR: `openlane config.tcl`.
-4. Build firmware: `make hello.elf` (cross-compile).
-
+- Python 3
+- [LiteX](https://github.com/enjoy-digital/litex),
+- [Caravel](https://github.com/chipfoundry/caravel_user_project)
+- [OpenLane (SKY130)](https://github.com/The-OpenROAD-Project/OpenLane),
+- [Verilator](https://github.com/verilator)
+- [Yosys with GHDL plugin](https://github.com/YosysHQ/yosys)
 
 Full guides in each repo's [Documentation folder](/Documentation/).
 
@@ -137,8 +130,12 @@ Full guides in each repo's [Documentation folder](/Documentation/).
 - **Metrics**: Timing reports, power estimates, DRC/LVS clean.
 
 ## 8. Full project GitHub Links:
-- [**(A) Baseline**]()
-- [**(B) Caravel User Project (PoC)**]()
+To achieve the above, I developed **two complementary repositories**:
+- **[Caravel User Project (PoC)](https://github.com/Lefteris-B/microwatt_design_challenge)**: A flexible LiteX-based SoC generator framework. As a proof-of-concept (PoC), it integrates ChipFoundry's proprietary SRAM macro [](https://github.com/chipfoundry/CF_UART), enabling arbitrary SoC configurations.
+- **[OpenFrame Build (Caravel Management SoC with Litex](https://github.com/chipfoundry/caravel_mgmt_soc_litex)**: Replaced the original VexRISC CPU with Microwatt while retaining the existing memory and peripherals. This provides a drop-in upgrade for POWER-based designs in the Caravel harness.
+
+Both repositories include simulation, synthesis, and PnR flows, with demonstrations of bare-metal booting via UART. This submission aligns with the proposal's profiles: (A) Baseline, (B) Caravel User Project (PoC), and partial (C) OpenFrame Build (Caravel Management SoC with Litex)
+
 
 ## 9. Project Vision & Impact
 
