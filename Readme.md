@@ -38,7 +38,10 @@ The original proposal outlined a reusable SoC generator to bridge the gap in ope
   -  A C "hello world" application,
   -   A C program displaying animated ASCII art, 
   -   A hw control program that renders user-input numbers on FPGA LEDs.
-- **Documentation**: Step-by-step guides for reproduction, including tool versions and artifacts inside the documentation folder
+- **Documentation**: Step-by-step guides for reproduction, including tool versions and artifacts inside the [documentation](/Documentation/) folder:
+  - [**(A) Baseline**](/Documentation/Baseline_guide.md)
+  - [**(B) Caravel User Project (PoC)**](/Documentation/Caravel_User_Project_(PoC).md)
+  - [**(C) OpenFrame Build (Caravel Management SoC with Litex)**](/Documentation/OpenFrame_Build_(Caravel_Management_SoC_with_Litex).md)
 
 ## Video Demonstrations
 
@@ -64,7 +67,7 @@ Top metal / service area
 |                           Padframe                            |
 |  +---------------------------------------------------------+  |
 |  |  IO Left  |  Core & Std Cells    |  SRAM Macro Region   |  |
-|  |  Pads     |  (Microwatt + AXI/   |  (grouped macros,    |  |
+|  |  Pads     | (Microwatt+Wishbone/ |  (grouped macros,    |  |
 |  |           |   LiteX interconnect)|  mirrored rows)      |  |
 |  |           |                      |                      |  |
 |  |           |                      |  [SRAM block A]      |  |
@@ -89,39 +92,10 @@ Macros grouped for routing efficiency; power straps every 50-200µm.
 | Memory System | 32KB-1MB SRAM | ChipFoundry CF_SRAM_1024x32 macros | Production-grade, characterized |
 | Interconnect | Wishbone Bus | LiteX-generated, ASIC-optimized | Mature, documented |
 | Peripherals | UART, SPI, GPIO, Timers | ChipFoundry CF_UART + LiteX IP | ASIC-verified drivers |
-| Extension | Custom slot | Documented Wishbone interface | For accelerators |
+| Extension | Custom slot | Documented Wishbone interface | For other peripherals |
 
-- **Target Specs**: 50-100MHz clock, <100mW power @ 50MHz.
-- **Fallback**: Used SPI external RAM in emulation for larger memory needs.
+- **Target Specs**: 50 clock, <100mW power @ 50MHz.
 
-### Floorplan Sketch
-A compact floorplan for SKY130 with on-chip SRAM and IO pads:
-```
-Top metal / service area
-+---------------------------------------------------------------+
-| IO Pad Ring (pads for VDDIO, GND, SPI, UART pins, CLK pads)   |
-|  [IO TOP PADS]                                                |
-+---------------------------------------------------------------+
-|                           Padframe                            |
-|  +---------------------------------------------------------+  |
-|  |  IO Left  |  Core & Std Cells    |  SRAM Macro Region   |  |
-|  |  Pads     |  (Microwatt + AXI/   |  (grouped macros,    |  |
-|  |           |   LiteX interconnect)|  mirrored rows)      |  |
-|  |           |                      |                      |  |
-|  |           |                      |  [SRAM block A]      |  |
-|  |           |     CPU Cluster      |  [SRAM block B]      |  |
-|  |           |  (Microwatt + L2)    |  [SRAM block C]      |  |
-|  |  Power    |  +--Cache/Periph--+  |  [SRAM block D]      |  |
-|  |  straps   |  | UART, SPI, ETH |  |                      |  |
-|  |  & PDN    |  +-----------------+  +---------------------+  |
-|  +---------------------------------------------------------+  |
-|  [IO BTM PADS]                                                |
-+---------------------------------------------------------------+
-Bottom metal / service area
-```
-
-
-- Macros grouped for routing efficiency; power straps every 50-200µm.
 
 ## 4. Implementation & Timeline Recap
 
@@ -150,21 +124,22 @@ Success probability was high due to proven blocks; fallbacks ensured progress.
 
 ### Quick Start (Baseline)
 1. `python soc_generator.py --config minimal` (generates RTL).
-2. Run simulation: `verilator -cc top.v`.
+2. Run simulation: `verilator -cc microwatt_wrapper.v`.
 3. PnR: `openlane config.tcl`.
 4. Build firmware: `make hello.elf` (cross-compile).
-5. CI: Check GitHub Actions for smoke tests.
 
-Full guides in each repo's README.
+
+Full guides in each repo's [Documentation folder](/Documentation/).
 
 ## 7. Verification & CI
 
-- **CI Flow**: .
 - **Tests**: Bare-metal hello, memtest, back-annotated sims.
 - **Metrics**: Timing reports, power estimates, DRC/LVS clean.
 
-## 8. Project Vision & Impact
+## 8. Full project GitHub Links:
+- [**(A) Baseline**]()
+- [**(B) Caravel User Project (PoC)**]()
+
+## 9. Project Vision & Impact
 
 MicroWatt-LX lowers barriers for POWER ASICs, enabling custom chips for education and research. Deliverables are reproducible, fostering OpenPOWER growth. Future: Full Linux on ASIC, more peripherals.
-
-
