@@ -18,13 +18,6 @@ To achieve this, I developed **two complementary repositories**:
 
 Both repositories include simulation, synthesis, and PnR flows, with demonstrations of bare-metal booting via UART. This submission aligns with the proposal's profiles: (A) Baseline, (B) Caravel User Project (PoC), and partial (C) OpenFrame Build (Caravel Management SoC with Litex)
 
-## Video Demonstrations
-
-- [Verilog generation and FPGA bitstream upload (Digilent Nexys 4 100T-xc7a100t)](https://www.youtube.com/watch?v=KdZCAlcoooA)
-- [Core simulation running LiteX BIOS and UART connection](https://www.youtube.com/watch?v=4e1k-80p-Ws)
-- [Binary demos on the core]()
-- [Full presentation with FPGA board]()
-
 ## 2. Achievements & Value Proposition
 
 ### From Proposal to Implementation
@@ -41,11 +34,18 @@ The original proposal outlined a reusable SoC generator to bridge the gap in ope
   - **(A) Baseline**: Microwatt + 32KB SRAM + UART. Fully PnR'd, precheck-validated, boots "hello world" bare-metal via UART.
   - **(B) Caravel User Project (PoC)**: Configured for ChipFoundry OpenFrame (padframe + power straps). Compliant with shuttle requirements.
   - **(C) OpenFrame Build (Caravel Management SoC with Litex)**: Developed a script to seamlessly replace the VexRiscv core with Microwatt. Adapted the overall workflow to support the new CPU core, ensuring compatibility and optimized integration.
-- **Verification**:  Conducted Verilator simulations, back-annotated timing analysis, and achieved clean DRC/LVS reports. Implemented smoke CI tests (currently in beta). Leveraged Vivado and LiteX to generate bitstreams, validating the overall flow and CPU code. Developed and successfully loaded binaries to the core, demonstrating functionalities such as
-  -  a C "hello world" application,
-  -   a C program displaying animated ASCII art, 
-  -   and an LED control program that renders user-input numbers on FPGA LEDs.
-- **Documentation**: Step-by-step guides for reproduction, including tool versions and artifacts.
+- **Verification**:  Conducted Verilator simulations, back-annotated timing analysis, and achieved clean DRC/LVS reports. Implemented smoke CI tests (currently in beta). Leveraged Vivado and LiteX to generate bitstreams, validating the overall flow and CPU code. Developed and successfully loaded binaries to the core, demonstrating functionalities such as:
+  -  A C "hello world" application,
+  -   A C program displaying animated ASCII art, 
+  -   A hw control program that renders user-input numbers on FPGA LEDs.
+- **Documentation**: Step-by-step guides for reproduction, including tool versions and artifacts inside the documentation folder
+
+## Video Demonstrations
+
+- [Verilog generation and FPGA bitstream upload (Digilent Nexys 4 100T-xc7a100t)](https://www.youtube.com/watch?v=KdZCAlcoooA)
+- [Core simulation running LiteX BIOS and UART connection](https://www.youtube.com/watch?v=4e1k-80p-Ws)
+- [Binary demos on the core]()
+- [Full presentation with FPGA board]()
 
 ### Value Proposition
 - **Python-to-Silicon Simplicity**: Users configure SoCs in Python, focusing on innovations like accelerators instead of low-level integration.
