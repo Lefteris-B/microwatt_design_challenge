@@ -138,7 +138,7 @@ All milestones achieved: Baseline RTL/sim, ASIC flow, OpenFrame compliance.
 - **Timing Closure**: Achieved 50MHz with buffering and conservative SDC.
 - **Memory Integration**: Used CF_SRAM_1024x32; fallback to smaller configs for area.
 - **Verification**: Incremental tests; clean DRC/LVS via iterative OpenLane runs.
-- **Software**: GCC cross-toolchain; bare-metal hello, U-Boot port; Linux in QEMU/FPGA.
+- **Software**: GCC cross-toolchain; bare-metal hello, Linux in FPGA.
 
 Success probability was high due to proven blocks; fallbacks ensured progress.
 
