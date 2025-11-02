@@ -96,7 +96,8 @@ Macros grouped for routing efficiency; power straps every 50-200µm.
 
 ### Floorplan Sketch
 A compact floorplan for SKY130 with on-chip SRAM and IO pads:
-```Top metal / service area
+```
+Top metal / service area
 +---------------------------------------------------------------+
 | IO Pad Ring (pads for VDDIO, GND, SPI, UART pins, CLK pads)   |
 |  [IO TOP PADS]                                                |
@@ -116,7 +117,8 @@ A compact floorplan for SKY130 with on-chip SRAM and IO pads:
 |  +---------------------------------------------------------+  |
 |  [IO BTM PADS]                                                |
 +---------------------------------------------------------------+
-Bottom metal / service area```
+Bottom metal / service area
+```
 
 
 - Macros grouped for routing efficiency; power straps every 50-200µm.
