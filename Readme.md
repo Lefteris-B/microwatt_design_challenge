@@ -14,7 +14,7 @@ This final submission presents **MicroWatt-LX**, an extensible, open-source fram
 
 ## 2. Parameterizing MicroWatt + LiteX to Generate Custom PowerPC SoCs
 
-This project demonstrates how the MicroWatt core can be fully parameterized using the LiteX SoC generator — allowing the designer to create different MicroWatt CPU variants (area-optimized, performance-oriented, FPU-enabled, MMU-less, etc.) while integrating ChipFoundry IP blocks (SRAM + UART) into a Caravel-compatible ASIC design.
+This project demonstrates how the MicroWatt core can be fully parameterized using the LiteX SoC generator, allowing the designer to create different MicroWatt CPU variants (area-optimized, performance-oriented, FPU-enabled, MMU-less, etc.) while integrating ChipFoundry IP blocks (SRAM + UART) into a Caravel-compatible ASIC design.
 
 ### 🔧 MicroWatt Feature Parameter Mapping
 You can parameterize the Microwatt core by changing these VHDL generics in **core.vhdl**:
@@ -42,8 +42,6 @@ These selections are automatically encoded into the LiteX **CPU variant string**
 | `cpu_variant` | string | `"standard+ghdl"` | CPU feature set | `cpu_variant="standard+ghdl+icache-512+dcache-512"` |
 | `clk_freq` | integer | `50000000` | System clock frequency (Hz) | `clk_freq=50000000` |
 | `cpu_reset_address` | integer | `0x00000000` | CPU reset vector address | `cpu_reset_address=0x00000000` |
-| `integrated_sram_size` | integer | `0` | Built-in SRAM size (bytes) | `integrated_sram_size=0` |
-| `integrated_rom_size` | integer | `0` | Built-in ROM size (bytes) | `integrated_rom_size=0` |
 | `uart_name` | string | `"stub"` | UART peripheral type | `uart_name="stub"` |
 
 
@@ -73,14 +71,19 @@ The original proposal outlined a reusable SoC generator to bridge the gap in ope
 
 ### Key Deliverables
 - **Reusable Generator**: Python scripts in both repos generate SoCs with configurable memory, peripherals, and extensions.
+
 - **Profiles Implemented**:
   - **(A) Baseline**: Microwatt + 32KB SRAM + UART. Fully PnR'd, precheck-validated, boots and runs bare-metal scripts via UART in simulation.
   - **(B) Caravel User Project (PoC)**: Configured for ChipFoundry OpenFrame (padframe + power straps). Compliant with shuttle requirements.
   - **(C) OpenFrame Build (Caravel Management SoC with Litex)**: Developed a script to seamlessly replace the VexRiscv core with Microwatt. Adapted the overall workflow to support the new CPU core, ensuring compatibility and optimized integration.
+
+
 - **Verification**:  Conducted Verilator simulations, back-annotated timing analysis, and achieved clean DRC/LVS reports. Implemented smoke CI tests (currently in beta). Leveraged Vivado and LiteX to generate bitstreams, validating the overall flow and CPU code. Developed and successfully loaded binaries to the core, demonstrating functionalities such as:
   -  A C "hello world" application,
   -   A C program displaying animated ASCII art, 
   -   A hw control program that renders user-input numbers on FPGA LEDs.
+
+
 - **Documentation**: Step-by-step guides for reproduction, including tool versions and artifacts inside the [documentation](/Documentation/) folder:
   - [**(A) Baseline**](/Documentation/Baseline_guide.md)
   - [**(B) Caravel User Project (PoC)**](/Documentation/Caravel_User_Project_(PoC).md)
@@ -204,4 +207,4 @@ Both repositories include simulation, synthesis, and PnR flows, with demonstrati
 
 ## 9. Project Vision & Impact
 
-MicroWatt-LX lowers barriers for POWER ASICs, enabling custom chips for education and research. Deliverables are reproducible, fostering OpenPOWER growth. Future: Full Linux on ASIC, more peripherals.
+MicroWatt-LX lowers barriers for POWER ASICs, enabling custom chips for education and research. Deliverables are reproducible, fostering OpenPOWER growth. I hope that in the future we can have Linux support on custom microwatt ASICs with a bigger variety of peripherals.
