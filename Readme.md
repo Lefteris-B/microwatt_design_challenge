@@ -12,6 +12,55 @@
 
 This final submission presents **MicroWatt-LX**, an extensible, open-source framework for generating parameterizable SoCs based on the [Microwatt](https://git.openpower.foundation/cores/microwatt) POWER CPU and [LiteX](https://github.com/enjoy-digital/litex) ecosystem, targeted at the [SKY130 PDK ](https://skywater-pdk.readthedocs.io/) using [ChipFoundry's Caravel User Project and OpenFrame](https://chipfoundry.io/soc_platforms). The project delivers a Python-driven pipeline that transforms simple configurations into *tapeout-ready ASICs*, complete with tested peripherals and a documented flow.
 
+## 2. Parameterizing MicroWatt + LiteX to Generate Custom PowerPC SoCs
+
+This project demonstrates how the MicroWatt core can be fully parameterized using the LiteX SoC generator — allowing the designer to create different MicroWatt CPU variants (area-optimized, performance-oriented, FPU-enabled, MMU-less, etc.) while integrating ChipFoundry IP blocks (SRAM + UART) into a Caravel-compatible ASIC design.
+
+### 🔧 MicroWatt Feature Parameter Mapping
+You can parameterize the Microwatt core by changing these VHDL generics in **core.vhdl**:
+
+
+CLI Flag | VHDL Generic | Effect
+---------|-------------|-------
+no-fpu | HAS_FPU=false | Disable hardware FPU
+no-btc | HAS_BTC=false | Remove MMU for major area savings
+log-length <n> | LOG_LENGTH=n | Change debug trace depth
+icache-size <bytes> | Config via LiteX wrapper | ICACHE enable/size
+dcache-size <bytes> | Config via LiteX wrapper | DCACHE enable/size
+
+You can also shorten the multiplication tree depth from 3 -> 1 to save on ASIC space.
+
+📝 *Cache sizes must be power-of-two ≥ 512 bytes when enabled.*
+
+These selections are automatically encoded into the LiteX **CPU variant string** (e.g. `standard+ghdl`), which the LiteX MicroWatt wrapper maps into MicroWatt generics.
+
+### LiteX SoC Configuration API
+
+| Python Parameter | Value Type | Default | Description | Example Usage |
+|------------------|------------|---------|-------------|---------------|
+| `cpu_type` | string | `"microwatt"` | CPU core type | `cpu_type="microwatt"` |
+| `cpu_variant` | string | `"standard+ghdl"` | CPU feature set | `cpu_variant="standard+ghdl+icache-512+dcache-512"` |
+| `clk_freq` | integer | `50000000` | System clock frequency (Hz) | `clk_freq=50000000` |
+| `cpu_reset_address` | integer | `0x00000000` | CPU reset vector address | `cpu_reset_address=0x00000000` |
+| `integrated_sram_size` | integer | `0` | Built-in SRAM size (bytes) | `integrated_sram_size=0` |
+| `integrated_rom_size` | integer | `0` | Built-in ROM size (bytes) | `integrated_rom_size=0` |
+| `uart_name` | string | `"stub"` | UART peripheral type | `uart_name="stub"` |
+
+
+### Memory Region Configuration
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `SoCRegion()` | `origin`, `size`, `cached` | Define memory region properties |
+| `bus.add_slave()` | `name`, `slave`, `region` | Connect peripheral to bus with memory mapping |
+
+We provide:
+
+- ✅ A modified LiteX Python [script](/microwatt_caravel_user_project/microwatt_chipfoundry_soc.py)
+- ✅ Command-line CPU configuration parameters
+- ✅ [Step-by-step](/Documentation/Caravel_User_Project_(PoC).md) ASIC flow (LiteX ➜ Caravel ➜ OpenLane hardening)
+
+
 ## 2. Achievements & Value Proposition
 
 ### From Proposal to Implementation
@@ -54,6 +103,22 @@ I have included demonstration videos that verify my design’s ability to build 
 ## 3. Implemented Architecture
 
 The MicroWatt-LX SoC uses a Wishbone bus managed by LiteX, with Microwatt as the core CPU.
+###  Architecture Overview
+
+```
++------------------------------+
+|      MicroWatt CPU           |
+|   (Configurable Variant)     |
++--------------+---------------+
+               |
+           Wishbone
+               |
+   +-----------+-----------+
+   |                       |
+4KB ChipFoundry SRAM   ChipFoundry UART
+ @0x0000_0000           @0xC000_0000
+```
+### Placememt
 ```
 Top metal / service area
 +---------------------------------------------------------------+
@@ -67,9 +132,9 @@ Top metal / service area
 |  |           |   LiteX interconnect)|  mirrored rows)      |  |
 |  |           |                      |                      |  |
 |  |           |                      |  [SRAM block A]      |  |
-|  |           |     CPU Cluster      |  [SRAM block B]      |  |
-|  |           |  (Microwatt + L2)    |  [SRAM block C]      |  |
-|  |  Power    |  +--Cache/Periph--+  |  [SRAM block D]      |  |
+|  |           |     CPU Cluster      |                      |  |
+|  |           |  (Microwatt + L2)    |                      |  |
+|  |  Power    |  +--Cache/Periph--+  |                      |  |
 |  |  straps   |  | UART, SPI, ETH |  |                      |  |
 |  |  & PDN    |  +-----------------+  +---------------------+  |
 |  +---------------------------------------------------------+  |
