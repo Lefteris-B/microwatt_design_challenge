@@ -43,9 +43,9 @@ I have included demonstration videos that verify my design’s ability to build 
 
 - [Verilog generation and FPGA bitstream upload (Digilent Nexys 4 100T-xc7a100t)](https://www.youtube.com/watch?v=KdZCAlcoooA)
 - [Core simulation running LiteX BIOS and UART connection](https://www.youtube.com/watch?v=4e1k-80p-Ws)
-- [Binary demos on the core]()
-- [Full presentation with FPGA board]()
 
+- [Full presentation with FPGA board](https://www.youtube.com/watch?v=lMUG94aeTvE)
+  - Here you can see the above presentation with a view of the [FPGA with Microwatt cpu core running baremetal binary demos](https://youtu.be/S7pRFUOgxYI)
 ### Value Proposition
 - **Python-to-Silicon Simplicity**: Users configure SoCs in Python, focusing on innovations like accelerators instead of low-level integration.
 - **ASIC-Ready Library**: Open collection of POWER-compatible peripherals for SKY130, using ChipFoundry macros for reliability.
