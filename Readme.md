@@ -63,7 +63,7 @@ We provide:
 
 ### From Proposal to Implementation
 
-The original proposal outlined a reusable SoC generator to bridge the gap in open POWER ASICs. This submission realizes that vision by:
+The original proposal outlined a **reusable SoC generator** to bridge the gap in open POWER ASICs. This submission realizes that vision by:
 - Integrating Microwatt into LiteX for seamless Python-based configuration.
 - Providing ASIC-verified peripherals, including ChipFoundry's SRAM and UART.
 - Demonstrating end-to-end flows: simulation, FPGA emulation, and OpenLane PnR for SKY130.
@@ -82,6 +82,11 @@ The original proposal outlined a reusable SoC generator to bridge the gap in ope
   -  A C "hello world" application,
   -   A C program displaying animated ASCII art, 
   -   A hw control program that renders user-input numbers on FPGA LEDs.
+
+      - Binaries are located: [/microwatt_caravel_user_project/bin_demos/](/microwatt_caravel_user_project/bin_demos/).
+      - Header files and linker scripts are located : [/microwatt_caravel_user_project/C_headers_for_binaries/](/microwatt_caravel_user_project/C_headers_for_binaries/).
+      - Litex Generator is located at [/microwatt_mgmt_soc_litex/litex/](/microwatt_mgmt_soc_litex/litex/).
+
 
 
 - **Documentation**: Step-by-step guides for reproduction, including tool versions and artifacts inside the [documentation](/Documentation/) folder:
@@ -121,6 +126,15 @@ The MicroWatt-LX SoC uses a Wishbone bus managed by LiteX, with Microwatt as the
 4KB ChipFoundry SRAM   ChipFoundry UART
  @0x0000_0000           @0xC000_0000
 ```
+
+#### How to Load Binaries
+
+The on-chip SRAM is connected to the Wishbone bus, allowing the Caravel management SoC to preload program data before the CPU starts running. To load a binary:
+1. the management core writes the program image into SRAM over Wishbone, ensuring the entry point is placed at address 0x000000.
+2.  After loading is complete, asserting a CPU reset causes execution to begin directly from this base address.
+3.   This enables a straightforward development flow where new firmware can be injected into SRAM without requiring external memory or re-synthesis of the design.
+
+
 ### Placememt
 ```
 Top metal / service area
