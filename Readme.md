@@ -16,7 +16,7 @@ This final submission presents **MicroWatt-LX**, an extensible, open-source fram
 
 This project demonstrates how the MicroWatt core can be fully parameterized using the LiteX SoC generator, allowing the designer to create different MicroWatt CPU variants (area-optimized, performance-oriented, FPU-enabled, MMU-less, etc.) while integrating ChipFoundry IP blocks (SRAM + UART) into a Caravel-compatible ASIC design.
 
-### 🔧 MicroWatt Feature Parameter Mapping
+###  MicroWatt Feature Parameter Mapping
 You can parameterize the Microwatt core by changing these VHDL generics in **core.vhdl**:
 
 
