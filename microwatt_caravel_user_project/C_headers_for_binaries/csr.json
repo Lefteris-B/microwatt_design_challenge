@@ -1,0 +1,138 @@
+{
+    "csr_bases": {
+        "timer0": 3355443200,
+        "ctrl": 3355445248,
+        "identifier_mem": 3355447296,
+        "uart": 3355449344
+    },
+    "csr_registers": {
+        "timer0_load": {
+            "addr": 3355443200,
+            "size": 1,
+            "type": "rw"
+        },
+        "timer0_reload": {
+            "addr": 3355443204,
+            "size": 1,
+            "type": "rw"
+        },
+        "timer0_en": {
+            "addr": 3355443208,
+            "size": 1,
+            "type": "rw"
+        },
+        "timer0_update_value": {
+            "addr": 3355443212,
+            "size": 1,
+            "type": "rw"
+        },
+        "timer0_value": {
+            "addr": 3355443216,
+            "size": 1,
+            "type": "ro"
+        },
+        "timer0_ev_status": {
+            "addr": 3355443220,
+            "size": 1,
+            "type": "ro"
+        },
+        "timer0_ev_pending": {
+            "addr": 3355443224,
+            "size": 1,
+            "type": "rw"
+        },
+        "timer0_ev_enable": {
+            "addr": 3355443228,
+            "size": 1,
+            "type": "rw"
+        },
+        "ctrl_reset": {
+            "addr": 3355445248,
+            "size": 1,
+            "type": "rw"
+        },
+        "ctrl_scratch": {
+            "addr": 3355445252,
+            "size": 1,
+            "type": "rw"
+        },
+        "ctrl_bus_errors": {
+            "addr": 3355445256,
+            "size": 1,
+            "type": "ro"
+        },
+        "uart_rxtx": {
+            "addr": 3355449344,
+            "size": 1,
+            "type": "rw"
+        },
+        "uart_txfull": {
+            "addr": 3355449348,
+            "size": 1,
+            "type": "ro"
+        },
+        "uart_rxempty": {
+            "addr": 3355449352,
+            "size": 1,
+            "type": "ro"
+        },
+        "uart_ev_status": {
+            "addr": 3355449356,
+            "size": 1,
+            "type": "ro"
+        },
+        "uart_ev_pending": {
+            "addr": 3355449360,
+            "size": 1,
+            "type": "rw"
+        },
+        "uart_ev_enable": {
+            "addr": 3355449364,
+            "size": 1,
+            "type": "rw"
+        },
+        "uart_txempty": {
+            "addr": 3355449368,
+            "size": 1,
+            "type": "ro"
+        },
+        "uart_rxfull": {
+            "addr": 3355449372,
+            "size": 1,
+            "type": "ro"
+        }
+    },
+    "constants": {
+        "config_platform_name": "microwatt_3",
+        "config_clock_frequency": 50000000,
+        "config_cpu_reset_addr": 0,
+        "config_cpu_type_microwatt": null,
+        "config_cpu_variant_standard": null,
+        "config_cpu_family": "ppc64",
+        "config_cpu_name": "microwatt",
+        "config_cpu_human_name": "microwatt",
+        "config_cpu_nop": "nop",
+        "config_bios_no_build_time": null,
+        "config_identifier": "microwatt cf-sram soc with uart for caravel",
+        "uart_polling": null,
+        "config_csr_data_width": 32,
+        "config_csr_alignment": 32,
+        "config_csr_ordering_big": null,
+        "config_bus_standard": "wishbone",
+        "config_bus_data_width": 32,
+        "config_bus_address_width": 32,
+        "config_bus_bursting": 0
+    },
+    "memories": {
+        "main_ram": {
+            "base": 0,
+            "size": 4096,
+            "type": "cached"
+        },
+        "csr": {
+            "base": 3355443200,
+            "size": 65536,
+            "type": "io"
+        }
+    }
+}
