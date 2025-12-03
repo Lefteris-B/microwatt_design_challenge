@@ -15,7 +15,7 @@
 
 This final submission presents **MicroWatt-LX**, an extensible, open-source framework for generating parameterizable SoCs based on the [Microwatt](https://git.openpower.foundation/cores/microwatt) POWER CPU and [LiteX](https://github.com/enjoy-digital/litex) ecosystem, targeted at the [SKY130 PDK ](https://skywater-pdk.readthedocs.io/) using [ChipFoundry's Caravel User Project and OpenFrame](https://chipfoundry.io/soc_platforms). The project delivers a Python-driven pipeline that transforms simple configurations into *tapeout-ready ASICs*, complete with tested peripherals and a documented flow.
 
-Full project [here]().
+Full project [here](https://github.com/Lefteris-B/caravel_user_project_microwatt_hackathon).
 
 ## 2. Achievements & Value Proposition
 
@@ -26,6 +26,65 @@ The original proposal outlined a **reusable SoC generator** to bridge the gap in
 - Providing ASIC-verified peripherals, including ChipFoundry's SRAM and UART.
 - Demonstrating end-to-end flows: simulation, FPGA emulation, and OpenLane PnR for SKY130.
 - Enabling community contributions through modular designs and CI pipelines.
+
+```mermaid
+mindmap
+  root((Microwatt<br/>CF-SRAM<br/>SoC))
+    CPU
+      Microwatt Core
+        64-bit POWER ISA
+        standard+ghdl variant
+        FPU & MMU
+      Reset Address
+        0x00000000
+    Memory
+      CF SRAM
+        4KB Total
+        1024 words × 32 bits
+        Word Addressing
+        ChipFoundry Macro
+      Address Range
+        0x00000000-0x00000FFF
+        Cached Region
+    Clock
+      Frequency
+        50 MHz default
+        Conservative target
+      CRG
+        Clock Reset Generator
+        sys clock domain
+    Interconnect
+      Wishbone Bus
+        32-bit data
+        LiteX-managed
+        Arbiter + Decoder
+      Masters
+        Microwatt CPU
+        Management Interface
+        UART Bridge optional
+      Slaves
+        CF SRAM
+        UART CSRs
+        Timer CSRs
+    Peripherals
+      UART
+        115200 baud 8N1
+        TX/RX
+        Console I/O
+        CSR Interface
+      Timer0
+        Programmable Timer
+        CSR Interface
+    External
+      Caravel Interface
+        Management WB
+        30-bit address
+        32-bit data
+      Serial Port
+        UART TX/RX pins
+        Program Loading
+        Debug Output
+```
 
 ### Key Deliverables
 - **Reusable Generator**: Python scripts in both repos generate SoCs with configurable memory, peripherals, and extensions.
