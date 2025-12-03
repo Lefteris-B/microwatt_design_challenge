@@ -215,7 +215,7 @@ Full guides in each repo's [Documentation folder](/Documentation/).
 
 ## 8. Full project GitHub Links:
 To achieve the above, I developed **two complementary repositories**:
-- **[Caravel User Project (PoC)](https://github.com/Lefteris-B/microwatt_design_challenge)**: A flexible LiteX-based SoC generator framework. As a proof-of-concept (PoC), it integrates ChipFoundry's proprietary SRAM macro [](https://github.com/chipfoundry/CF_UART), enabling arbitrary SoC configurations.
+- **[Caravel User Project (PoC)](https://github.com/Lefteris-B/caravel_user_project_microwatt_hackathon)**: A flexible LiteX-based SoC generator framework. As a proof-of-concept (PoC), it integrates ChipFoundry's proprietary SRAM macro [](https://github.com/chipfoundry/CF_UART), enabling arbitrary SoC configurations.
 - **[OpenFrame Build (Caravel Management SoC with Litex](https://github.com/chipfoundry/caravel_mgmt_soc_litex)**: Replaced the original VexRISC CPU with Microwatt while retaining the existing memory and peripherals. This provides a drop-in upgrade for POWER-based designs in the Caravel harness.
 
 Both repositories include simulation, synthesis, and PnR flows, with demonstrations of bare-metal booting via UART. This submission aligns with the proposal's profiles: (A) Baseline, (B) Caravel User Project (PoC), and partial (C) OpenFrame Build (Caravel Management SoC with Litex)
