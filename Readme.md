@@ -148,7 +148,52 @@ The on-chip SRAM is connected to the Wishbone bus, allowing the Caravel manageme
 <img src="Documentation/images/caravel_layout.png" alt="MicroWatt-LX" width="600" /></div>
 
 Macros grouped for routing efficiency; power straps every 50-200µm.
-
+### Caravel Integration flow
+```mermaid
+graph TB
+    subgraph CARAVEL["🏛️ Caravel SoC"]
+        MGMT_CORE[Management Core<br/>PicoRV32]
+        MGMT_BUS[Management<br/>Wishbone Bus]
+    end
+    
+    subgraph USER_PROJECT["User Project Area"]
+        subgraph MICROWATT_SOC["Microwatt SoC"]
+            CPU[Microwatt<br/>POWER CPU]
+            RAM[CF SRAM<br/>4KB]
+            UART[UART]
+            TIMER[Timer]
+            SOC_BUS[LiteX Wishbone Bus]
+        end
+        
+        MGMT_IF[Management<br/>WB Interface<br/>30-bit addr<br/>32-bit data]
+    end
+    
+    subgraph IO_PADS["I/O Pads"]
+        UART_PADS[UART TX/RX]
+        CLK_PAD[Clock]
+        RST_PAD[Reset]
+    end
+    
+    MGMT_CORE --> MGMT_BUS
+    MGMT_BUS -->|Program Loading<br/>Debug Access| MGMT_IF
+    MGMT_IF -->|Master| SOC_BUS
+    
+    CPU -->|Master| SOC_BUS
+    SOC_BUS --> RAM
+    SOC_BUS --> UART
+    SOC_BUS --> TIMER
+    
+    UART <--> UART_PADS
+    CLK_PAD --> CPU
+    RST_PAD --> CPU
+    
+    style MGMT_CORE fill:#fff4e1
+    style CPU fill:#e1f5ff
+    style RAM fill:#ffe1e1
+    style UART fill:#e1ffe1
+    style TIMER fill:#e1ffe1
+    style MGMT_IF fill:#f0e1ff
+```
 
 ### System Components
 
