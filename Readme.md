@@ -73,23 +73,66 @@ The MicroWatt-LX SoC uses a Wishbone bus managed by LiteX, with Microwatt as the
 
 ```mermaid
 graph TB
-    subgraph MicroWatt-LX["MicroWatt-LX ASIC Starter Kit"]
-        CPU[Microwatt<br/>POWER CPU]
-        LiteX[LiteX SoC Framework<br/>ASIC-Optimized Wishbone Bus]
-        
-        CPU <--> LiteX
-        
-        LiteX --> SRAM[ChipFoundry SRAM<br/>32KB - 1MB]
-        LiteX --> MEM[Memory Controller]
-        LiteX --> PERIPH[Standard Peripherals<br/>UART • SPI • GPIO • Timer]
-        LiteX --> EXT[Extension Interface<br/>Custom Accelerators]
+    subgraph External["🌐 External Interfaces"]
+        CLK[Clock<br/>50MHz]
+        RST[Reset]
+        SERIAL[Serial UART<br/>TX/RX<br/>115200 baud]
+        MGMT[Caravel Management<br/>Wishbone Interface<br/>30-bit addr / 32-bit data]
     end
     
-    style CPU fill:#e1f5ff
-    style LiteX fill:#fff4e1
+    subgraph SoC["Microwatt CF-SRAM SoC"]
+        CRG[Clock Reset<br/>Generator]
+        
+        subgraph CPU_BLOCK["CPU Block"]
+            MICROWATT[Microwatt CPU<br/>64-bit POWER ISA<br/>standard+ghdl variant]
+        end
+        
+        subgraph BUS["LiteX Wishbone Bus"]
+            WB_ARBITER[Wishbone Arbiter<br/>& Interconnect]
+        end
+        
+        subgraph MEMORY["Memory Subsystem"]
+            SRAM_WRAP[CF_SRAM_1024x32<br/>Wishbone Wrapper]
+            SRAM[ChipFoundry SRAM<br/>4KB<br/>1024 words × 32 bits<br/>@ 0x00000000]
+        end
+        
+        subgraph PERIPHERALS["Peripherals"]
+            UART_CORE[UART<br/>Console I/O<br/>CSR Interface]
+            TIMER[Timer0<br/>CSR Interface]
+            CSR[CSR Bus<br/>Control/Status Regs]
+        end
+        
+        subgraph BRIDGES["Bus Bridges"]
+            MGMT_BR[Management<br/>WB Bridge]
+            UART_BR[UART WB Bridge<br/>optional]
+        end
+    end
+    
+    CLK --> CRG
+    RST --> CRG
+    CRG --> MICROWATT
+    CRG --> WB_ARBITER
+    
+    MICROWATT <-->|Master| WB_ARBITER
+    MGMT -->|External Master| MGMT_BR
+    MGMT_BR -->|Master| WB_ARBITER
+    SERIAL <--> UART_BR
+    UART_BR -->|Master<br/>Program Loading| WB_ARBITER
+    
+    WB_ARBITER <-->|Slave| SRAM_WRAP
+    SRAM_WRAP <--> SRAM
+    WB_ARBITER <-->|Slave| CSR
+    CSR --> UART_CORE
+    CSR --> TIMER
+    SERIAL <--> UART_CORE
+    
+    style MICROWATT fill:#e1f5ff
     style SRAM fill:#ffe1e1
-    style PERIPH fill:#e1ffe1
-    style EXT fill:#ffe1f0
+    style WB_ARBITER fill:#fff4e1
+    style UART_CORE fill:#e1ffe1
+    style TIMER fill:#e1ffe1
+    style MGMT_BR fill:#f0e1ff
+    style UART_BR fill:#ffe1f0
 ```
 
 #### How to Load Binaries
