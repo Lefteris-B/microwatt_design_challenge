@@ -194,13 +194,6 @@ graph TB
     style UART_BR fill:#ffe1f0
 ```
 
-#### How to Load Binaries
-
-The on-chip SRAM is connected to the Wishbone bus, allowing the Caravel management SoC to preload program data before the CPU starts running. To load a binary:
-1. the management core writes the program image into SRAM over Wishbone, ensuring the entry point is placed at address 0x000000.
-2.  After loading is complete, asserting a CPU reset causes execution to begin directly from this base address.
-3.   This enables a straightforward development flow where new firmware can be injected into SRAM without requiring external memory or re-synthesis of the design.
-
 
 ### Placememt
 <div align="center">
@@ -336,6 +329,12 @@ These selections are automatically encoded into the LiteX **CPU variant string**
 | `SoCRegion()` | `origin`, `size`, `cached` | Define memory region properties |
 | `bus.add_slave()` | `name`, `slave`, `region` | Connect peripheral to bus with memory mapping |
 
+#### How to Load Binaries
+
+The on-chip SRAM is connected to the Wishbone bus, allowing the Caravel management SoC to preload program data before the CPU starts running. To load a binary:
+1. the management core writes the program image into SRAM over Wishbone, ensuring the entry point is placed at address 0x000000.
+2.  After loading is complete, asserting a CPU reset causes execution to begin directly from this base address.
+3.   This enables a straightforward development flow where new firmware can be injected into SRAM without requiring external memory or re-synthesis of the design.
 We provide:
 
 - ✅ A modified LiteX Python [script](/microwatt_caravel_user_project/microwatt_chipfoundry_soc.py)
